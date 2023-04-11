@@ -18,4 +18,11 @@
     content: "{{ lookup('amazon.aws.aws_ssm', '/homelab/private_key', region=aws_region) }}\n"
     dest: ~/.ssh/id_ecdsa
     mode: 0600
+
+- name: Update my authorized_keys
+  get_url:
+    url: '{{ my_public_keys }}'
+    dest: ~/.ssh/authorized_keys
+    mode: '0600'
+
 ...

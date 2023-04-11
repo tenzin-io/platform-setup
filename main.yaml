@@ -3,12 +3,13 @@
 - name: Setup my private key
   hosts: localhost
   connection: local
-  vars:
-    aws_region: us-east-1
 
   tasks:
     - name: Setup private key
       include_tasks: ssh.yaml
+      vars:
+        aws_region: us-east-1
+        my_public_keys: https://github.com/tlhakhan.keys
       tags: ssh
 
     - name: Setup preferences
