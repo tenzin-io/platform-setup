@@ -1,0 +1,16 @@
+---
+- name: Update my tmux.conf
+  copy:
+    src: tmux.conf
+    dest: ~/.tmux.conf
+
+- name: Update my gitconfig
+  copy:
+    src: gitconfig
+    dest: ~/.gitconfig
+
+- name: Update my vimrc
+  copy:
+    src: vimrc
+    dest: ~/.vimrc
+...

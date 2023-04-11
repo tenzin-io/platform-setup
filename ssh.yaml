@@ -1,0 +1,21 @@
+---
+- name: Check for required variables 
+  assert:
+    that:
+      - lookup('ansible.builtin.env', 'AWS_ACCESS_KEY_ID')
+      - lookup('ansible.builtin.env', 'AWS_SECRET_ACCESS_KEY')
+      - lookup('ansible.builtin.env', 'AWS_SESSION_TOKEN')
+    fail_msg: A required environment variable was not defined
+    success_msg: All required environment variables were defined
+
+- name: Create the .ssh folder
+  file:
+    path: ~/.ssh
+    mode: 0700
+
+- name: Update my private key
+  copy:
+    content: "{{ lookup('amazon.aws.aws_ssm', '/homelab/private_key', region=aws_region) }}\n"
+    dest: ~/.ssh/id_ecdsa
+    mode: 0600
+...

@@ -1,0 +1,16 @@
+#!/usr/local/bin/ansible-playbook -t untagged
+---
+- name: Setup my private key
+  hosts: localhost
+  connection: local
+  vars:
+    aws_region: us-east-1
+
+  tasks:
+    - name: Setup private key
+      include_tasks: ssh.yaml
+      tags: ssh
+
+    - name: Setup preferences
+      include_tasks: prefs.yaml
+      tags: prefs
