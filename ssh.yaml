@@ -15,7 +15,7 @@
 
 - name: Update my private key
   copy:
-    content: "{{ lookup('amazon.aws.aws_ssm', '/homelab/private_key', region=aws_region) }}\n"
+    content: "{{ lookup('amazon.aws.aws_ssm', '/homelab/ssh_private_key', region=aws_region) }}\n"
     dest: ~/.ssh/id_ecdsa
     mode: 0600
 
