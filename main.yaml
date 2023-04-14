@@ -1,6 +1,6 @@
 #!/usr/local/bin/ansible-playbook -t untagged
 ---
-- name: Setup my private key
+- name: Setup my control machine
   hosts: localhost
   connection: local
 
