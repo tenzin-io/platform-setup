@@ -1,4 +1,3 @@
-#!/usr/local/bin/ansible-playbook -t untagged
 ---
 - name: Setup my control machine
   hosts: localhost
@@ -13,5 +12,5 @@
       tags: ssh
 
     - name: Setup preferences
-      include_tasks: prefs.yaml
+      import_tasks: prefs.yaml
       tags: prefs
