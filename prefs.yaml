@@ -1,4 +1,12 @@
 ---
+- name: Install packages
+  package:
+    name: '{{ item }}'
+  loop:
+    - tmux
+    - vim
+    - git
+
 - name: Update my tmux.conf
   copy:
     src: tmux.conf
