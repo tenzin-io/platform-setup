@@ -5,7 +5,7 @@
 
   tasks:
     - name: Setup private key
-      include_tasks: ssh.yaml
+      import_tasks: ssh.yaml
       vars:
         aws_region: us-east-1
         my_public_keys: https://github.com/tlhakhan.keys
