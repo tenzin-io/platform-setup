@@ -1,7 +1,6 @@
 ---
 - name: Setup my control machine
-  hosts: localhost
-  connection: local
+  hosts: my_machines
 
   tasks:
     - name: Install packages
