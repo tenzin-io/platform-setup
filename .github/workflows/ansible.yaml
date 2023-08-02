@@ -33,6 +33,7 @@ jobs:
       - name: Generate a temporary SSH key pair
         run: |
           ssh-keygen -t ed25519 -f actions -q -N ""
+          cat actions.pub
 
       - name: Get Vault token
         uses: hashicorp/vault-action@v2
@@ -47,4 +48,5 @@ jobs:
           VAULT_ADDR: https://vault.tenzin.io
         run: |
           vault write -field=signed_key ssh/sign/sysuser-role \
-            public_key=actions.pub > actions-cert.pub
+            public_key=@actions.pub > actions-cert.pub
+          ssh-keygen -Lf actions-cert.pub
