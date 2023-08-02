@@ -3,6 +3,9 @@ name: Run playbook
 on:
   workflow_dispatch:
 
+env:
+  VAULT_ADDR: https://vault.tenzin.io
+
 jobs:
   ansible:
     runs-on: [homelab, v1]
@@ -32,9 +35,8 @@ jobs:
 
       - name: Generate a temporary SSH key pair
         run: |
-          ssh-keygen -t ed25519 -f actions -q -N ""
+          ssh-keygen -t ed25519 -f actions -N ""
           chmod 0600 actions
-          cat actions.pub
 
       - name: Get Vault token
         uses: hashicorp/vault-action@v2
@@ -45,13 +47,7 @@ jobs:
           exportToken: true
       
       - name: Sign temporary SSH public key
-        env:
-          VAULT_ADDR: https://vault.tenzin.io
-        run: |
-          vault write -field=signed_key ssh/sign/sysuser-role \
-            public_key=@actions.pub > actions-cert.pub
-          ssh-keygen -Lf actions-cert.pub
+        run: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
 
       - name: Run playbook
-        run:
-          ansible-playbook main.yaml
+        run: ansible-playbook main.yaml
