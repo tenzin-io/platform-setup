@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     runs-on: [homelab, v1]
+    permission:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v3
@@ -18,3 +21,17 @@ jobs:
           pip install --upgrade ansible
           ansible-galaxy collection install --timeout 180 community.general
 
+      - name: Generate a temporary SSH keypair
+        run: |
+          ssh-keygen -t ed25519 -f actions
+
+      - name: Get Vault token
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://vault.tenzin.io
+          role: ${{ vars.VAULT_ROLE_TO_ASSUME }}
+          method: jwt
+          exportToken: true
+      
+      - name: Debug
+        run: env
