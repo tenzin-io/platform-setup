@@ -42,3 +42,9 @@ jobs:
           method: jwt
           exportToken: true
       
+      - name: Sign temporary SSH public key
+        env:
+          VAULT_ADDR: https://vault.tenzin.io
+        run: |
+          vault write -field=signed_key ssh/sign/sysuser-role \
+            public_key=actions.pub > actions-cert.pub
