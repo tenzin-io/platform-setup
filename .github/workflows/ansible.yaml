@@ -47,7 +47,9 @@ jobs:
           exportToken: true
       
       - name: Sign temporary SSH public key
-        run: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+        run: |
+          vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+          ssh-keygen -Lf actions-cert.pub
 
       - name: Run playbook
         run: ansible-playbook main.yaml
