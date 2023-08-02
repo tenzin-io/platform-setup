@@ -4,13 +4,26 @@
   connection: local
 
   tasks:
-    - name: Setup private key
-      import_tasks: ssh.yaml
-      vars:
-        aws_region: us-east-1
-        my_public_keys: https://github.com/tlhakhan.keys
-      tags: ssh
+    - name: Install packages
+      package:
+        name: '{{ item }}'
+      become: true
+      loop:
+        - tmux
+        - vim
+        - git
 
-    - name: Setup preferences
-      import_tasks: prefs.yaml
-      tags: prefs
+    - name: Update my tmux.conf
+      copy:
+        src: tmux.conf
+        dest: ~/.tmux.conf
+
+    - name: Update my gitconfig
+      copy:
+        src: gitconfig
+        dest: ~/.gitconfig
+
+    - name: Update my vimrc
+      copy:
+        src: vimrc
+        dest: ~/.vimrc
