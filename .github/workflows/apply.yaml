@@ -6,7 +6,7 @@ on:
 jobs:
   build:
     runs-on: [homelab, v1]
-    permission:
+    permissions:
       contents: read
       id-token: write
 
