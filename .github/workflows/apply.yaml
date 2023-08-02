@@ -1,0 +1,20 @@
+name: Run playbook
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: [homelab, v1]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Ansible
+        run: |
+          apt-get update
+          apt-get install -y python3-pip
+          pip install --upgrade pip
+          pip install --upgrade ansible
+          ansible-galaxy collection install --timeout 180 community.general
+
