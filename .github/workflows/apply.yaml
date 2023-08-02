@@ -12,8 +12,8 @@ jobs:
 
       - name: Install Ansible
         run: |
-          apt-get update
-          apt-get install -y python3-pip
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
           pip install --upgrade pip
           pip install --upgrade ansible
           ansible-galaxy collection install --timeout 180 community.general
