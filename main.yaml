@@ -1,4 +1,18 @@
 ---
+- name: Setup my temporary SSH key
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Create an SSH key pair
+      openssh_keypair:
+        path: actions
+        type: ed25519
+
+    - name: Sign the public key
+      shell: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+      args:
+        creates: actions-cert.pub
+
 - name: Setup my control machine
   hosts: my_machines
 
@@ -26,3 +40,12 @@
       copy:
         src: vimrc
         dest: ~/.vimrc
+
+- name: Post-playbook clean up
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Remove signed key
+      file:
+        path: actions-cert.pub
+        state: absent

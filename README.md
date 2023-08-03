@@ -16,4 +16,5 @@ pip install --upgrade pip
 pip install --upgrade ansible
 
 ansible-galaxy collection install --timeout 180 community.general
+ansible-galaxy collection install --timeout 180 community.crypto
 ```
