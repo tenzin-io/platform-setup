@@ -1,2 +1,7 @@
+[default]
+localhost
+
 [my_machines]
-kube-101.tenzin.io
+
+[my_fileservers]
+zfs-1.tenzin.io

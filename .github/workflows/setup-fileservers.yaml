@@ -1,4 +1,4 @@
-name: Run playbook
+name: Setup fileservers
 
 on:
   workflow_dispatch:
@@ -25,4 +25,4 @@ jobs:
           exportToken: true
 
       - name: Run playbook
-        run: ansible-playbook main.yaml
+        run: ansible-playbook setup-fileservers.yaml

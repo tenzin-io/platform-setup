@@ -1,0 +1,66 @@
+---
+- name: Gather facts
+  setup:
+    filter:
+      - 'ansible_distribution_release'
+      - 'ansible_distribution'
+
+- name: Assert that host is Debian bookworm
+  assert:
+    that:
+      - ansible_facts["distribution_release"] == "bookworm"
+      - ansible_facts["distribution"] == "Debian"
+
+- name: Add contrib
+  apt_repository:
+    repo: '{{ item }}'
+    state: present
+  loop:
+    - deb http://http.us.debian.org/debian bookworm contrib
+    - deb http://security.debian.org/debian-security bookworm-security contrib
+    - deb http://http.us.debian.org/debian bookworm-updates contrib
+    - deb http://deb.debian.org/debian bookworm-backports contrib
+
+- name: Add apt preferences
+  copy:
+    dest: /etc/apt/preferences.d/90_zfs
+    content: |-
+      Package: src:zfs-linux
+      Pin: release n=bookworm-backports
+      Pin-Priority: 990
+
+- name: Update cache and install packages
+  apt:
+    package: '{{ item }}' 
+    update_cache: true
+  loop:
+    - nvme-cli
+    - dpkg-dev
+    - linux-headers-generic
+    - linux-image-generic
+    - zfs-dkms
+    - zfs-zed
+    - zfsutils-linux
+
+- name: Setup zpool
+  command: 'zpool create {{ zpool_name }} {{ zpool_disks }}'
+  when:
+    - zpool_disks is defined
+    - zpool_name is defined
+  args:
+    creates: '/{{ zpool_name }}'
+
+- name: Setup parent zfs options
+  command: 'zfs set {{ item }} {{ zpool_name }}'
+  when:
+    - zpool_name is defined
+  loop:
+    - compression=zstd
+    - atime=off
+
+- name: Setup filesystems
+  shell: 'zfs get -Hpo property,value name {{ zpool_name }}/{{ item }} || zfs create {{ zpool_name }}/{{ item }}'
+  loop: '{{ filesystems }}'
+  when:
+    - zpool_name is defined
+    - filesystems is defined
