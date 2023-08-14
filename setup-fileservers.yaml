@@ -1,12 +1,8 @@
 ---
 - name: Setup my fileservers
   hosts: my_fileservers
-  gather_facts: false
   become: true
 
-  pre_tasks:
-    - include_tasks: tasks/setup-login.yaml
-  
   roles:
     - name: setup-zfs
       vars:
@@ -14,6 +10,3 @@
         zpool_disks: /dev/nvme0n2
         filesystems:
           - shared
-
-  post_tasks:
-    - include_tasks: tasks/cleanup-login.yaml
