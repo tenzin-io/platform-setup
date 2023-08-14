@@ -7,6 +7,9 @@
 
 - name: Sign the public key
   shell: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+  environment:
+    VAULT_ADDR: "{{ lookup('env', 'VAULT_ADDR') }}"
+    VAULT_TOKEN: "{{ lookup('env', 'VAULT_TOKEN') }}"
   args:
     creates: actions-cert.pub
   delegate_to: localhost
