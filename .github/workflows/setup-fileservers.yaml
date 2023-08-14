@@ -25,7 +25,10 @@ jobs:
           exportToken: true
 
       - name: Ping zfs-1.tenzin.io
-        run: ping -w1 -c4 zfs-1.tenzin.io
+        run: |-
+          apt-get update
+          apt-get install -y iputils-ping
+          ping -w1 -c4 zfs-1.tenzin.io
 
       - name: Run playbook
         run: ansible-playbook -vvv setup-fileservers.yaml
