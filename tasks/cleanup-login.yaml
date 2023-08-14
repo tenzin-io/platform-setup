@@ -1,0 +1,6 @@
+- name: Remove signed key
+  file:
+    path: actions-cert.pub
+    state: absent
+  delegate_to: localhost
+  connection: local
