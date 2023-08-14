@@ -25,4 +25,4 @@ jobs:
           exportToken: true
 
       - name: Run playbook
-        run: ansible-playbook setup-fileservers.yaml
+        run: ansible-playbook -vvv setup-fileservers.yaml
