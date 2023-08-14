@@ -26,8 +26,8 @@ jobs:
 
       - name: Ping zfs-1.tenzin.io
         run: |-
-          apt-get update
-          apt-get install -y iputils-ping
+          sudo apt-get update
+          sudo apt-get install -y iputils-ping
           ping -w1 -c4 zfs-1.tenzin.io
 
       - name: Run playbook
