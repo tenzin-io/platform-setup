@@ -1,0 +1,10 @@
+---
+- import_playbook: setup-keys.yaml
+
+- name: Setup my Kubernetes development cluster
+  hosts: my_k8s_dev
+  become: true
+  roles:
+    - name: setup-kubernetes
+
+- import_playbook: cleanup-keys.yaml
