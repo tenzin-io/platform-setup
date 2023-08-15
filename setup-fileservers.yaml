@@ -4,8 +4,6 @@
 - name: Setup my fileservers
   hosts: my_fileservers
   become: true
-  pre_tasks:
-
   roles:
     - name: setup-zfs
       vars:
