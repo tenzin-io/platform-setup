@@ -4,15 +4,12 @@
   gather_facts: false
 
   tasks:
-    - debug:
-        msg: '{{ playbook_dir }}'
-
     - name: Create an SSH key pair
       openssh_keypair:
-        path: '{{ playbook_dir }}/actions'
+        path: actions
         type: ed25519
 
     - name: Sign the public key
-      shell: 'vault write -field=signed_key ssh/sign/sysuser-role public_key=@{{ playbook_dir }}/actions.pub > {{ playbook_dir }}/actions-cert.pub'
+      shell: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
       args:
-        creates: '{{ playbook_dir }}/actions-cert.pub'
+        creates: actions-cert.pub
