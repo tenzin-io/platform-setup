@@ -1,4 +1,4 @@
-name: Setup kubernetes development environment
+name: Setup k8s dev environment
 
 on:
   workflow_dispatch:
