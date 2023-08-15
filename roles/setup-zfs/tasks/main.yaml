@@ -41,6 +41,8 @@
     - zfs-dkms
     - zfs-zed
     - zfsutils-linux
+    - nfs-common
+    - nfs-kernel-server
 
 - name: Setup zpool
   command: 'zpool create {{ zpool_name }} {{ zpool_disks }}'
@@ -59,8 +61,12 @@
     - atime=off
 
 - name: Setup filesystems
-  shell: 'zfs get -Hpo property,value name {{ zpool_name }}/{{ item }} || zfs create {{ zpool_name }}/{{ item }}'
+  shell: |-
+    zfs get -Hpo property,value name {{ zpool_name }}/{{ filesystem.name }} || zfs create {{ zpool_name }}/{{ filesystem.name }}
+    zfs set sharenfs=rw={{ filesystem.clients | join(':') }},no_root_squash,sec=sys,no_subtree_check {{ zpool_name }}/{{ filesystem.name }}
   loop: '{{ filesystems }}'
+  loop_control:
+    loop_var: filesystem
   when:
     - zpool_name is defined
     - filesystems is defined

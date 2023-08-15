@@ -9,4 +9,6 @@
         zpool_name: data
         zpool_disks: /dev/nvme0n2
         filesystems:
-          - shared
+          - name: shared
+            clients:
+              - console-1.tenzin.io
