@@ -24,11 +24,5 @@ jobs:
           method: jwt
           exportToken: true
 
-      - name: Setup SSH key
-        run: ./scripts/setup-ssh-key.sh
-
       - name: Run playbook
         run: ansible-playbook setup-fileservers.yaml
-
-      - name: Cleanup SSH key
-        run: ./scripts/cleanup-ssh-key.sh

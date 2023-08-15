@@ -1,7 +1,10 @@
 ---
+- import_playbook: setup-keys.yaml
+
 - name: Setup my fileservers
   hosts: my_fileservers
   become: true
+  pre_tasks:
 
   roles:
     - name: setup-zfs
@@ -12,3 +15,5 @@
           - name: shared
             clients:
               - console-1.tenzin.io
+
+- import_playbook: cleanup-keys.yaml
