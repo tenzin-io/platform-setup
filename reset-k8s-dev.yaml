@@ -1,7 +1,7 @@
 ---
 - import_playbook: setup-keys.yaml
 
-- name: Setup my Kubernetes development cluster
+- name: Reset my Kubernetes development cluster
   hosts: my_esxi_host
   gather_facts: false
   tasks:
