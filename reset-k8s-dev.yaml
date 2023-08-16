@@ -6,6 +6,6 @@
   gather_facts: false
   tasks:
     - name: Revert snapshot
-      command: vim-cmd vmsvc/snapshot.revert 56 1 false
+      command: vim-cmd vmsvc/snapshot.revert 56 2 false
 
 - import_playbook: cleanup-keys.yaml
