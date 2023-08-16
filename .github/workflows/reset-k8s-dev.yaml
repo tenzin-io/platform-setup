@@ -1,0 +1,30 @@
+name: Reset k8s dev cluster
+
+on:
+  workflow_dispatch:
+
+env:
+  VAULT_ADDR: https://vault.tenzin.io
+
+jobs:
+  ansible:
+    runs-on: [homelab, v1]
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Get Vault token
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://vault.tenzin.io
+          role: ${{ vars.VAULT_ROLE_TO_ASSUME }}
+          method: jwt
+          exportToken: true
+
+      - name: Run playbook
+        run: ansible-playbook reset-k8s-dev.yaml

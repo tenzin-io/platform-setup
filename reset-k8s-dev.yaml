@@ -1,0 +1,11 @@
+---
+- import_playbook: setup-keys.yaml
+
+- name: Setup my Kubernetes development cluster
+  hosts: my_esxi_host
+  gather_facts: false
+  tasks:
+    - name: Revert snapshot
+      command: vim-cmd vmsvc/snapshot.revert 56 1 false
+
+- import_playbook: cleanup-keys.yaml
