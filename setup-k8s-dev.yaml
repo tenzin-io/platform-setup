@@ -4,6 +4,9 @@
 - name: Setup my Kubernetes development cluster
   hosts: my_k8s_dev
   become: true
+  vars:
+    kubernetes_control_plane_endpoint_name: k8s-dev-cluster-endpoint
+    kubernetes_control_plane_endpoint_address: 192.168.200.193
   roles:
     - name: setup-kubernetes
 

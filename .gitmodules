@@ -1,0 +1,3 @@
+[submodule "roles/setup-kubernetes"]
+	path = roles/setup-kubernetes
+	url = https://github.com/tenzin-io/setup-kubernetes.git
