@@ -6,7 +6,7 @@
   become: true
   vars:
     kubernetes_control_plane_endpoint_name: k8s-dev-cluster-endpoint
-    kubernetes_control_plane_endpoint_address: 192.168.200.193
+    kubernetes_control_plane_endpoint_address: 192.168.200.229
   roles:
     - name: setup-kubernetes
 
