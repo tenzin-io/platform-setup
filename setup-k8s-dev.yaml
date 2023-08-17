@@ -23,6 +23,7 @@
         data:
           data:
             kubernetes_admin_conf: "{{ kubernetes_admin_conf['content'] | b64decode }}"
+      delegate_to: localhost
       connection: local
 
 - import_playbook: cleanup-keys.yaml
