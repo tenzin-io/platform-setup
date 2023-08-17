@@ -5,9 +5,24 @@
   hosts: my_k8s_dev
   become: true
   vars:
-    kubernetes_control_plane_endpoint_name: k8s-dev-cluster-endpoint
+    kubernetes_control_plane_endpoint_name: homelab-k8s-dev.tenzin.io
     kubernetes_control_plane_endpoint_address: 192.168.200.229
+
   roles:
     - name: setup-kubernetes
+
+  tasks:
+    - name: Read the admin.conf file
+      slurp:
+        src: /etc/kubernetes/admin.conf
+      register: kubernetes_admin_conf
+
+    - name: Upload the admin.conf file
+      community.hashi_vault.vault_write:
+        path: secrets/data/kubeconfig/homelab-k8s-dev
+        data:
+          data:
+            kubernetes_admin_conf: "{{ kubernetes_admin_conf['content'] | b64decode }}"
+      connection: local
 
 - import_playbook: cleanup-keys.yaml
