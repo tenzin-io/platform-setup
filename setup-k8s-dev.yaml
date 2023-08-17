@@ -12,12 +12,6 @@
       become: true
 
   tasks:
-    - name: Read the admin.conf file
-      slurp:
-        src: /etc/kubernetes/admin.conf
-      register: kubernetes_admin_conf
-      become: true
-
     - name: Upload the admin.conf file
       community.hashi_vault.vault_write:
         path: secrets/data/kubeconfig/homelab-k8s-dev
@@ -26,5 +20,6 @@
             kubernetes_admin_conf: "{{ kubernetes_admin_conf['content'] | b64decode }}"
       delegate_to: localhost
       connection: local
+      when: kubernetes_admin_conf is defined and kubernetes_admin_conf.content is defined
 
 - import_playbook: cleanup-keys.yaml
