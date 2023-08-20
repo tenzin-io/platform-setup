@@ -9,5 +9,8 @@ kube-99.tenzin.io
 [my_fileservers]
 zfs-1.tenzin.io
 
+[my_firewall]
+fw-1.tenzin.io
+
 [my_esxi_host]
 vs-3.tenzin.io ansible_python_interpreter=/bin/python
