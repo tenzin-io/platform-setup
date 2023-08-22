@@ -1,0 +1,11 @@
+---
+- import_playbook: setup-keys.yaml
+
+- name: Setup my firewall host
+  hosts: my_firewall
+
+  roles:
+    - name: setup-suricata
+      become: true
+
+- import_playbook: cleanup-keys.yaml

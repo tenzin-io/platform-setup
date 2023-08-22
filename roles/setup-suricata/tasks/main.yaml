@@ -1,0 +1,27 @@
+---
+- name: Gather facts
+  setup:
+    filter:
+      - 'ansible_distribution_release'
+      - 'ansible_distribution'
+
+- name: Assert that host is Debian bookworm
+  assert:
+    that:
+      - ansible_facts["distribution_release"] == "bookworm"
+      - ansible_facts["distribution"] == "Debian"
+    
+- name: Install Suricata packages
+  apt:
+    name: '{{ item }}'
+    update_cache: true
+  loop:
+    - suricata
+    - suricata-update
+    - jq
+
+- name: Start and enable Suricata
+  service:
+    name: suricata
+    state: started
+    enabled: true
