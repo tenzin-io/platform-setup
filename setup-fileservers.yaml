@@ -13,5 +13,6 @@
           - name: shared
             clients:
               - console-1.tenzin.io
+              - kube-99.tenzin.io
 
 - import_playbook: cleanup-keys.yaml
