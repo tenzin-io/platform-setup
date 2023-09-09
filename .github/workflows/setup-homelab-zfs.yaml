@@ -1,10 +1,6 @@
 name: Setup homelab-zfs 
 
 on:
-  push:
-    branches: ["main"]
-    paths:
-      - setup-fileservers.yaml
   workflow_dispatch:
 
 env:
