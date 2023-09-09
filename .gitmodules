@@ -1,3 +1,3 @@
-[submodule "roles/setup-kubernetes"]
-	path = roles/setup-kubernetes
-	url = https://github.com/tenzin-io/setup-kubernetes.git
+[submodule "homelab-k8s-dev/roles/setup-kubernetes"]
+	path = homelab-k8s-dev/roles/setup-kubernetes
+	url = git@github.com:tenzin-io/setup-kubernetes.git
