@@ -37,8 +37,14 @@ jobs:
           vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/actions.pub > ${HOME}/.ssh/actions-cert.pub
           ssh-keygen -Lf ${HOME}/.ssh/actions-cert.pub
 
-      - name: Run playbook
-        run: ansible-playbook setup-k8s-dev.yaml
+      - name: Run sysprep nodes playbook
+        run: ansible-playbook setup-k8s-sysprep-node.yaml
+
+      - name: Run bootstrap node playbook
+        run: ansible-playbook setup-k8s-bootstrap-node.yaml
+
+      - name: Run cluster nodes playbook
+        run: ansible-playbook setup-k8s-cluster-node.yaml
 
       - name: Clean up SSH key
         run: |

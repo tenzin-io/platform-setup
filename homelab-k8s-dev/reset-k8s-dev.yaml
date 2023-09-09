@@ -6,9 +6,9 @@
     - name: Revert snapshot
       command: '{{ item }}' 
       loop:
-        - vim-cmd vmsvc/snapshot.revert 58 1 false
-        - vim-cmd vmsvc/snapshot.revert 59 1 false
-        - vim-cmd vmsvc/snapshot.revert 60 1 false
-        - vim-cmd vmsvc/snapshot.revert 61 1 false
+        - vim-cmd vmsvc/snapshot.revert 58 2 false
+        - vim-cmd vmsvc/snapshot.revert 59 2 false
+        - vim-cmd vmsvc/snapshot.revert 61 2 false
+        - vim-cmd vmsvc/snapshot.revert 62 1 false
 
 ...

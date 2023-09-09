@@ -1,15 +1,10 @@
 ---
-- name: Setup my Kubernetes development cluster
-  hosts: my_k8s_dev
-
-  vars:
-    kubernetes_control_plane_endpoint_name: homelab-k8s-dev.tenzin.io
-    kubernetes_control_plane_endpoint_address: 192.168.200.229
+- name: Setup my Kubernetes development cluster bootstrap node
+  hosts: bootstrap_node 
+  become: true
 
   roles:
-    - name: setup-kubernetes
-      become: true
-      when: "'control_plane' in group_names"
+    - name: setup-kubernetes/cluster-node
 
   tasks:
     - name: Upload the admin.conf file

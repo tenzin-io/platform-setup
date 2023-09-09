@@ -1,0 +1,9 @@
+---
+- name: Prepare my Kubernetes development cluster nodes
+  hosts: my_k8s_dev 
+  become: true
+
+  roles:
+    - name: setup-kubernetes/sysprep-node
+
+...
