@@ -38,13 +38,13 @@ jobs:
           ssh-keygen -Lf ${HOME}/.ssh/actions-cert.pub
 
       - name: Run sysprep nodes playbook
-        run: ansible-playbook setup-k8s-sysprep-node.yaml
+        run: ansible-playbook setup-k8s-sysprep-nodes.yaml
 
       - name: Run bootstrap node playbook
         run: ansible-playbook setup-k8s-bootstrap-node.yaml
 
       - name: Run cluster nodes playbook
-        run: ansible-playbook setup-k8s-cluster-node.yaml
+        run: ansible-playbook setup-k8s-cluster-nodes.yaml
 
       - name: Clean up SSH key
         run: |
