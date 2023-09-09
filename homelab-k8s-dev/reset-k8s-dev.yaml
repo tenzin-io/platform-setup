@@ -1,6 +1,4 @@
 ---
-- import_playbook: playbooks/setup-keys.yaml
-
 - name: Reset my Kubernetes development cluster
   hosts: my_esxi_host
   gather_facts: false
@@ -8,4 +6,4 @@
     - name: Revert snapshot
       command: vim-cmd vmsvc/snapshot.revert 56 2 false
 
-- import_playbook: playbooks/cleanup-keys.yaml
+...

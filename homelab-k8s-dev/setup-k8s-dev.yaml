@@ -1,6 +1,4 @@
 ---
-- import_playbook: playbooks/setup-keys.yaml
-
 - name: Setup my Kubernetes development cluster
   hosts: my_k8s_dev
 
@@ -23,5 +21,4 @@
       connection: local
       when: kubernetes_admin_conf is defined and kubernetes_admin_conf.content is defined
 
-- import_playbook: playbooks/cleanup-keys.yaml
 ...
