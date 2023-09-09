@@ -1,0 +1,14 @@
+- name: Setup SSH CA signed keys
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+    - name: Create an SSH key pair
+      openssh_keypair:
+        path: actions
+
+    - name: Sign the public key
+      shell: vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+      args:
+        creates: actions-cert.pub
