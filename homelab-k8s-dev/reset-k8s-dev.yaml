@@ -4,6 +4,11 @@
   gather_facts: false
   tasks:
     - name: Revert snapshot
-      command: vim-cmd vmsvc/snapshot.revert 56 2 false
+      command: '{{ item }}' 
+      loop:
+        - vim-cmd vmsvc/snapshot.revert 58 1 false
+        - vim-cmd vmsvc/snapshot.revert 59 1 false
+        - vim-cmd vmsvc/snapshot.revert 60 1 false
+        - vim-cmd vmsvc/snapshot.revert 61 1 false
 
 ...
