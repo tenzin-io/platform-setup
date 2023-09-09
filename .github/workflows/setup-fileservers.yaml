@@ -9,6 +9,7 @@ on:
 
 env:
   VAULT_ADDR: https://vault.tenzin.io
+  WORKFLOW_DIR: homelab-zfs
 
 jobs:
   ansible:
@@ -16,6 +17,10 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.WORKFLOW_DIR }}
+
 
     steps:
       - uses: actions/checkout@v3
@@ -28,5 +33,20 @@ jobs:
           method: jwt
           exportToken: true
 
+      - name: Setup SSH key
+        run: |
+          ssh-keygen -t ed25519 -f actions -N ""
+          chmod 0600 actions
+          vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
+          ssh-keygen -Lf actions-cert.pub
+
       - name: Run playbook
         run: ansible-playbook setup-fileservers.yaml
+
+      - name: Clean up SSH key
+        run: |
+          test -e actions && rm actions
+          test -e actions.pub && rm actions.pub
+          test -e actions-cert.pub && rm actions-cert.pub
+
+...

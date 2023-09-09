@@ -1,6 +1,4 @@
 ---
-- import_playbook: setup-keys.yaml
-
 - name: Setup my fileservers
   hosts: my_fileservers
   become: true
@@ -18,4 +16,4 @@
             clients:
               - kube-99.tenzin.io
 
-- import_playbook: cleanup-keys.yaml
+...
