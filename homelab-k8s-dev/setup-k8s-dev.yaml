@@ -1,8 +1,9 @@
 ---
-- import_playbook: setup-keys.yaml
+- import_playbook: playbooks/setup-keys.yaml
 
 - name: Setup my Kubernetes development cluster
   hosts: my_k8s_dev
+
   vars:
     kubernetes_control_plane_endpoint_name: homelab-k8s-dev.tenzin.io
     kubernetes_control_plane_endpoint_address: 192.168.200.229
@@ -22,4 +23,5 @@
       connection: local
       when: kubernetes_admin_conf is defined and kubernetes_admin_conf.content is defined
 
-- import_playbook: cleanup-keys.yaml
+- import_playbook: playbooks/cleanup-keys.yaml
+...
