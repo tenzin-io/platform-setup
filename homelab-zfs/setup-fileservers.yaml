@@ -11,9 +11,11 @@
           - name: shared
             clients:
               - console-1.tenzin.io
-              - kube-99.tenzin.io
           - name: homelab-k8s-dev
             clients:
-              - kube-99.tenzin.io
+              - kube-dev-1.tenzin.io
+              - kube-dev-2.tenzin.io
+              - kube-dev-11.tenzin.io
+              - kube-dev-22.tenzin.io
 
 ...
