@@ -9,7 +9,7 @@
   roles:
     - name: setup-kubernetes
       become: true
-      when: "'control-plane' in group_names"
+      when: "'control_plane' in group_names"
 
   tasks:
     - name: Upload the admin.conf file

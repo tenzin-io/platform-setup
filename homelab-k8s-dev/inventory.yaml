@@ -1,10 +1,10 @@
 my_k8s_dev:
   children:
-    control-plane:
+    control_plane:
       hosts:
         kube-dev-1.tenzin.io:
         kube-dev-2.tenzin.io:
-    worker-nodes:
+    worker_nodes:
       hosts:
         kube-dev-10.tenzin.io:
         kube-dev-11.tenzin.io:
