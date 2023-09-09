@@ -1,11 +1,15 @@
-name: Setup k8s dev cluster
+name: Setup homelab-zfs 
 
 on:
+  push:
+    branches: ["main"]
+    paths:
+      - setup-fileservers.yaml
   workflow_dispatch:
 
 env:
   VAULT_ADDR: https://vault.tenzin.io
-  WORKFLOW_DIR: homelab-k8s-dev
+  WORKFLOW_DIR: homelab-zfs
 
 jobs:
   ansible:
@@ -17,10 +21,9 @@ jobs:
       run:
         working-directory: ${{ env.WORKFLOW_DIR }}
 
+
     steps:
       - uses: actions/checkout@v3
-        with:
-          submodules: recursive
 
       - name: Get Vault token
         uses: hashicorp/vault-action@v2
@@ -38,7 +41,7 @@ jobs:
           ssh-keygen -Lf actions-cert.pub
 
       - name: Run playbook
-        run: ansible-playbook setup-k8s-dev.yaml
+        run: ansible-playbook setup-fileservers.yaml
 
       - name: Clean up SSH key
         run: |

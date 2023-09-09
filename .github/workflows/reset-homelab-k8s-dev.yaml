@@ -1,4 +1,4 @@
-name: Reset k8s dev cluster
+name: Reset homelab-k8s-dev
 
 on:
   workflow_dispatch:
