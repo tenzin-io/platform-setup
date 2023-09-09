@@ -5,6 +5,7 @@ on:
 
 env:
   VAULT_ADDR: https://vault.tenzin.io
+  WORKFLOW_DIR: homelab-k8s-dev
 
 jobs:
   ansible:
@@ -12,6 +13,9 @@ jobs:
     permissions:
       contents: read
       id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.WORKFLOW_DIR }}
 
     steps:
       - uses: actions/checkout@v3
