@@ -32,18 +32,18 @@ jobs:
 
       - name: Setup SSH key
         run: |
-          ssh-keygen -t ed25519 -f actions -N ""
-          chmod 0600 actions
-          vault write -field=signed_key ssh/sign/sysuser-role public_key=@actions.pub > actions-cert.pub
-          ssh-keygen -Lf actions-cert.pub
+          ssh-keygen -t ed25519 -f ${HOME}/.ssh/actions -N ""
+          chmod 0600 ${HOME}/.ssh/actions
+          vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/actions.pub > ${HOME}/.ssh/actions-cert.pub
+          ssh-keygen -Lf ${HOME}/.ssh/actions-cert.pub
 
       - name: Run playbook
         run: ansible-playbook setup-k8s-dev.yaml
 
       - name: Clean up SSH key
         run: |
-          test -e actions && rm actions
-          test -e actions.pub && rm actions.pub
-          test -e actions-cert.pub && rm actions-cert.pub
+          test -e ${HOME}/.ssh/actions && rm ${HOME}/.ssh/actions
+          test -e ${HOME}/.ssh/actions.pub && rm ${HOME}/.ssh/actions.pub
+          test -e ${HOME}/.ssh/actions-cert.pub && rm ${HOME}/.ssh/actions-cert.pub
 
 ...
