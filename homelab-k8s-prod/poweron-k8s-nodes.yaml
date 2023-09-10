@@ -1,6 +1,6 @@
 ---
-- name: Power on my Kubernetes development cluster
-  hosts: my_k8s_prod
+- name: Power on my Kubernetes cluster
+  hosts: my_k8s_cluster
   gather_facts: false
   tasks:
     - name: Power on nodes 
