@@ -8,14 +8,16 @@
         zpool_name: data
         zpool_disks: /dev/nvme0n2
         filesystems:
-          - name: shared
-            clients:
-              - console-1.tenzin.io
           - name: homelab-k8s-dev
             clients:
               - kube-dev-1.tenzin.io
               - kube-dev-2.tenzin.io
               - kube-dev-11.tenzin.io
               - kube-dev-12.tenzin.io
-
+          - name: homelab-k8s-prod
+            clients:
+              - kube-prod-1.tenzin.io          
+              - kube-prod-2.tenzin.io          
+              - kube-prod-11.tenzin.io          
+              - kube-prod-12.tenzin.io          
 ...
