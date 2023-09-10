@@ -1,0 +1,14 @@
+---
+- name: Power off my Kubernetes development cluster
+  hosts: my_esxi_host
+  gather_facts: false
+  tasks:
+    - name: Power off nodes 
+      command: '{{ item }}' 
+      loop:
+        - vim-cmd vmsvc/power.shutdown 58
+        - vim-cmd vmsvc/power.shutdown 59
+        - vim-cmd vmsvc/power.shutdown 61
+        - vim-cmd vmsvc/power.shutdown 62
+
+...
