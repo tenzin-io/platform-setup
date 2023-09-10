@@ -1,0 +1,9 @@
+---
+- name: Power on my Kubernetes development cluster
+  hosts: my_k8s_prod
+  gather_facts: false
+  tasks:
+    - name: Power on nodes 
+      command: "vim-cmd vmsvc/power.on {{ vm_id }}"
+      delegate_to: "{{ groups['my_esxi_host'] | first }}"
+...

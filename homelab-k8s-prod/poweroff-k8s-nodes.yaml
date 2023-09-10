@@ -1,0 +1,10 @@
+---
+- name: Power off my Kubernetes cluster
+  hosts: my_k8s_cluster
+  gather_facts: false
+  tasks:
+    - name: Power off nodes 
+      command: "vim-cmd vmsvc/power.shutdown {{ vm_id }}"
+      delegate_to: "{{ groups['my_esxi_host'] | first }}"
+
+...

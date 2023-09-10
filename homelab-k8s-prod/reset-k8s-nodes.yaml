@@ -1,0 +1,9 @@
+---
+- name: Reset my Kubernetes production cluster
+  hosts: my_k8s_prod
+  gather_facts: false
+  tasks:
+    - name: Revert snapshot
+      command: "vim-cmd vmsvc/snapshot.revert {{ vm_id }} 1 false"
+      delegate_to: "{{ groups['my_esxi_host'] | first }}"
+...
