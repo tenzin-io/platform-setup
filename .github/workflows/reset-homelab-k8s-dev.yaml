@@ -38,7 +38,7 @@ jobs:
           ssh-keygen -Lf ${HOME}/.ssh/actions-cert.pub
 
       - name: Run playbook
-        run: ansible-playbook reset-k8s-dev.yaml
+        run: ansible-playbook reset-k8s-nodes.yaml
 
       - name: Clean up SSH key
         run: |

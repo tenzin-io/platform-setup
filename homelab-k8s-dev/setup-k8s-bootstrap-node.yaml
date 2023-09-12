@@ -1,5 +1,5 @@
 ---
-- name: Setup my Kubernetes development cluster bootstrap node
+- name: Setup my Kubernetes bootstrap node
   hosts: bootstrap_node 
   become: true
 
@@ -9,7 +9,7 @@
   tasks:
     - name: Upload the admin.conf file
       community.hashi_vault.vault_write:
-        path: secrets/data/kubeconfig/homelab-k8s-dev
+        path: '{{ kubeconfig_secrets_path }}'
         data:
           data:
             kubernetes_admin_conf: "{{ kubernetes_admin_conf['content'] | b64decode }}"

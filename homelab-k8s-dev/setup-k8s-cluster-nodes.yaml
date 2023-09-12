@@ -1,5 +1,5 @@
 ---
-- name: Setup my Kubernetes development cluster nodes
+- name: Setup my Kubernetes cluster nodes
   hosts: control_plane:worker_nodes 
   become: true
 
