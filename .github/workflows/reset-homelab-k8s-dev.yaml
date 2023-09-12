@@ -9,7 +9,7 @@ env:
 
 jobs:
   ansible:
-    runs-on: [homelab, v1]
+    runs-on: [self-hosted, homelab]
     permissions:
       contents: read
       id-token: write
