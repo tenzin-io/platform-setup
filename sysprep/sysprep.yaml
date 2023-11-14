@@ -1,0 +1,8 @@
+---
+- name: Prepare my hosts
+  hosts: my_hosts
+  become: true
+
+  roles:
+    - name: sshd_config
+...
