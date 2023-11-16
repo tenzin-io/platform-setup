@@ -1,23 +1,13 @@
 ---
 - name: Setup my fileservers
   hosts: my_fileservers
-  become: true
   roles:
     - name: setup-zfs
       vars:
         zpool_name: data
-        zpool_disks: /dev/nvme0n2
+        zpool_disks: /dev/nvme0n2 /dev/nvme0n3 /dev/nvme0n4
         filesystems:
-          - name: homelab-k8s-dev
+          - name: dev-data 
             clients:
-              - kube-dev-1.tenzin.io
-              - kube-dev-2.tenzin.io
-              - kube-dev-11.tenzin.io
-              - kube-dev-12.tenzin.io
-          - name: homelab-k8s-prod
-            clients:
-              - kube-prod-1.tenzin.io          
-              - kube-prod-2.tenzin.io          
-              - kube-prod-11.tenzin.io          
-              - kube-prod-12.tenzin.io          
+              - dev-kube-1.lan
 ...
