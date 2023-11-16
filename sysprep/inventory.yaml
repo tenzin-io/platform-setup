@@ -1,3 +1,5 @@
 my_hosts:
   hosts:
     debian-97:
+  vars:
+    ansible_become_password: packer
