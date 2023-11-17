@@ -1,0 +1,17 @@
+my_k8s_cluster:
+  children:
+    bootstrap_node:
+      hosts:
+        dev-kube-1:
+          vm_id: 32
+  vars:
+    control_plane_endpoint_name: dev-k8s
+    control_plane_endpoint_address: 192.168.200.231
+    kubeconfig_secrets_path: secrets/data/kubeconfig/dev-k8s
+    ansible_become_password: packer
+
+my_esxi_host:
+  hosts:
+    vsphere:
+      ansible_ssh_user: root
+      ansible_python_interpreter: /bin/python
