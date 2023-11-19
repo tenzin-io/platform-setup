@@ -73,8 +73,10 @@ jobs:
 
       - name: Run playbook
         run: |
-          ansible-galaxy install -r requirements.yaml
-          ansible-playbook reset-k8s-nodes.yaml
+          # ansible-galaxy install -r requirements.yaml
+          # ansible-playbook reset-k8s-nodes.yaml
+          ssh -l root vsphere uname -a
+          ssh -l packer dev-kube-1 uname -a
 
       - name: Clean up SSH key
         run: |
