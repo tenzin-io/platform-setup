@@ -61,9 +61,6 @@ jobs:
             User packer
             Hostname console
 
-          Host dev-kube-*
-            ProxyJump bastion
-
           Host vsphere
             ProxyJump bastion
           EOF
@@ -76,7 +73,6 @@ jobs:
           # ansible-galaxy install -r requirements.yaml
           # ansible-playbook reset-k8s-nodes.yaml
           ssh -l root vsphere uname -a
-          ssh -l packer dev-kube-1 uname -a
 
       - name: Clean up SSH key
         run: |
