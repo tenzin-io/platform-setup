@@ -5,11 +5,11 @@ on:
 
 env:
   VAULT_ADDR: https://vault.tenzin.io
-  WORKFLOW_DIR: homelab-k8s-dev
+  WORKFLOW_DIR: dev-k8s
 
 jobs:
   ansible:
-    runs-on: [self-hosted, homelab]
+    runs-on: [ubuntu]
     permissions:
       contents: read
       id-token: write
@@ -23,27 +23,39 @@ jobs:
           submodules: recursive
 
       - name: Get Vault token
+        id: vault-secrets
         uses: hashicorp/vault-action@v2
         with:
           url: https://vault.tenzin.io
           role: ${{ vars.VAULT_ROLE_TO_ASSUME }}
           method: jwt
           exportToken: true
+          secrets: |
+            secret/data/tailscale/github-actions client_id | TS_OAUTH_CLIENT_ID
+            secret/data/tailscale/github-actions client_secret | TS_OAUTH_CLIENT_SECRET
+
+      - name: Tailscale connection
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+
 
       - name: Setup SSH key
         run: |
-          ssh-keygen -t ed25519 -f ${HOME}/.ssh/actions -N ""
-          chmod 0600 ${HOME}/.ssh/actions
-          vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/actions.pub > ${HOME}/.ssh/actions-cert.pub
-          ssh-keygen -Lf ${HOME}/.ssh/actions-cert.pub
+          ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
+          chmod 0600 ${HOME}/.ssh/id_ed25519
+          vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
+          ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
 
       - name: Run playbook
         run: ansible-playbook reset-k8s-nodes.yaml
 
       - name: Clean up SSH key
         run: |
-          test -e ${HOME}/.ssh/actions && rm ${HOME}/.ssh/actions
-          test -e ${HOME}/.ssh/actions.pub && rm ${HOME}/.ssh/actions.pub
-          test -e ${HOME}/.ssh/actions-cert.pub && rm ${HOME}/.ssh/actions-cert.pub
+          test -e ${HOME}/.ssh/actions && rm ${HOME}/.ssh/id_ed25519
+          test -e ${HOME}/.ssh/actions.pub && rm ${HOME}/.ssh/id_ed25519.pub
+          test -e ${HOME}/.ssh/actions-cert.pub && rm ${HOME}/.ssh/id_ed25519-cert.pub
 
 ...
