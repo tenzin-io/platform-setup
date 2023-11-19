@@ -1,4 +1,4 @@
-name: Reset homelab-k8s-dev
+name: Reset dev-k8s
 
 on:
   workflow_dispatch:
@@ -78,10 +78,8 @@ jobs:
           ansible-galaxy install -r requirements.yaml
           ansible-playbook reset-k8s-nodes.yaml
 
-      - name: Clean up SSH key
+      - name: Clean up SSH key folder
         run: |
-          test -e ${HOME}/.ssh/actions && rm ${HOME}/.ssh/id_ed25519
-          test -e ${HOME}/.ssh/actions.pub && rm ${HOME}/.ssh/id_ed25519.pub
-          test -e ${HOME}/.ssh/actions-cert.pub && rm ${HOME}/.ssh/id_ed25519-cert.pub
+          test -d ${HOME}/.ssh && rm -rf ${HOME}/.ssh
 
 ...
