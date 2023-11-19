@@ -47,6 +47,13 @@ jobs:
           unzip vault.zip
           sudo install vault /usr/local/bin
 
+      - name: Setup SSH key
+        run: |
+          ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
+          chmod 0600 ${HOME}/.ssh/id_ed25519
+          vault write -field=signed_key ssh/sign/packer-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
+          ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
+ 
       - name: Setup SSH jump host
         run: |
           cat <<EOF > ~/.ssh/config
@@ -58,13 +65,6 @@ jobs:
             ProxyJump bastion
           EOF
 
-      - name: Setup SSH key
-        run: |
-          ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
-          chmod 0600 ${HOME}/.ssh/id_ed25519
-          vault write -field=signed_key ssh/sign/packer-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
-          ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
- 
       - name: Install Ansible
         run: pipx install ansible-core
 
