@@ -1,0 +1,3 @@
+- name: setup-kubernetes
+  src: git+ssh://git@github.com/tenzin-io/setup-kubernetes.git
+  version: main
