@@ -47,6 +47,17 @@ jobs:
           unzip vault.zip
           sudo install vault /usr/local/bin
 
+      - name: Setup SSH jump host
+        run: |
+          cat <<EOF > ~/.ssh/config
+          Host bastion
+            User packer
+            Hostname console
+
+          Host dev-kube-*
+            ProxyJump bastion
+          EOF
+
       - name: Setup SSH key
         run: |
           ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
