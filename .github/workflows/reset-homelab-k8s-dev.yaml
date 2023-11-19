@@ -74,7 +74,7 @@ jobs:
           # ansible-playbook reset-k8s-nodes.yaml
           tailscale status
           ss -tlpn
-          ssh -l root vsphere uname -a
+          ssh -vvvvv -l root vsphere uname -a
 
       - name: Clean up SSH key
         run: |
