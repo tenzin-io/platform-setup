@@ -49,6 +49,15 @@ jobs:
           vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
           ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
 
+      - name: Install Vault
+        run: |
+          curl -Lo vault.zip https://releases.hashicorp.com/vault/1.15.2/vault_1.15.2_linux_amd64.zip
+          unzip vault.zip
+          sudo install vault /usr/local/bin
+  
+      - name: Install Ansible
+        run: pipx install ansible-core
+
       - name: Run playbook
         run: |
           ansible-galaxy install -r requirements.yaml
