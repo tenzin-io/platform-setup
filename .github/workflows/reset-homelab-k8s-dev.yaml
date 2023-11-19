@@ -65,6 +65,9 @@ jobs:
 
           Host vsphere
             ProxyJump bastion
+          
+          Host dev-kube-*
+            ProxyJump bastion
           EOF
 
       - name: Install Ansible
@@ -72,11 +75,8 @@ jobs:
 
       - name: Run playbook
         run: |
-          # ansible-galaxy install -r requirements.yaml
-          # ansible-playbook reset-k8s-nodes.yaml
-          tailscale status
-          ss -tlpn
-          ssh -A -vvvvv -l root vsphere uname -a
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook reset-k8s-nodes.yaml
 
       - name: Clean up SSH key
         run: |
