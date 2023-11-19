@@ -1,7 +1,6 @@
 ---
 - name: Prepare my Kubernetes cluster nodes
   hosts: my_k8s_cluster
-  become: true
 
   roles:
     - name: setup-kubernetes/sysprep-node
