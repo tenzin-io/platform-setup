@@ -1,7 +1,6 @@
 ---
 - name: Setup my Kubernetes bootstrap node
   hosts: bootstrap_node 
-  become: true
 
   roles:
     - name: setup-kubernetes/cluster-node
