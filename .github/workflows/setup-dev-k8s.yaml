@@ -76,6 +76,7 @@ jobs:
       - name: Run playbook
         run: |
           ansible-galaxy install -r requirements.yaml
+          ansible-playbook setup-k8s-sysprep-nodes.yaml
           ansible-playbook setup-k8s-bootstrap-node.yaml
           ansible-playbook setup-k8s-cluster-nodes.yaml
 
