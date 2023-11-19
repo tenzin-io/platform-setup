@@ -51,7 +51,7 @@ jobs:
         run: |
           ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
           chmod 0600 ${HOME}/.ssh/id_ed25519
-          vault write -field=signed_key ssh/sign/sysuser-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
+          vault write -field=signed_key ssh/sign/packer-role public_key=@${HOME}/.ssh/id_ed25519.pub > ${HOME}/.ssh/id_ed25519-cert.pub
           ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
  
       - name: Install Ansible
