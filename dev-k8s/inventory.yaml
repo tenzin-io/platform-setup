@@ -6,6 +6,18 @@ my_k8s_cluster:
           vm_id: 32
           keepalived_interface: ens160
           keepalived_virtual_address: 192.168.200.231
+    control_plane:
+      hosts:
+        dev-kube-2:
+          vm_id: 37
+          keepalived_interface: ens160
+          keepalived_virtual_address: 192.168.200.231
+    worker_nodes:
+      hosts:
+        dev-kube-3:
+          vm_id: 38
+        dev-kube-4:
+          vm_id: 39
   vars:
     control_plane_endpoint_name: dev-k8s
     control_plane_endpoint_address: 192.168.200.231
