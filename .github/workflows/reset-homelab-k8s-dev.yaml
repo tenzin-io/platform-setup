@@ -31,7 +31,7 @@ jobs:
           method: jwt
           exportToken: true
           secrets: |
-            secrets/data/tailscale/github-actions client_id | TS_OAUTH_CLIENT_ID
+            secrets/data/tailscale/github-actions client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/tailscale/github-actions client_secret | TS_OAUTH_CLIENT_SECRET
 
       - name: Tailscale connection
