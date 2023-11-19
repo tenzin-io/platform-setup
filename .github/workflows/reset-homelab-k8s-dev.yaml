@@ -61,7 +61,7 @@ jobs:
             User packer
             Hostname console
 
-          Host dev-kube-*
+          Host *
             ProxyJump bastion
           EOF
 
