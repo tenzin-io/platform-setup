@@ -50,7 +50,9 @@ jobs:
           ssh-keygen -Lf ${HOME}/.ssh/id_ed25519-cert.pub
 
       - name: Run playbook
-        run: ansible-playbook reset-k8s-nodes.yaml
+        run: |
+          ansible-galaxy install -r requirements.yaml
+          ansible-playbook reset-k8s-nodes.yaml
 
       - name: Clean up SSH key
         run: |
