@@ -57,6 +57,8 @@ jobs:
       - name: Setup SSH jump host
         run: |
           cat <<EOF > ~/.ssh/config
+          StrictHostKeyChecking no
+
           Host bastion
             User packer
             Hostname console
