@@ -49,9 +49,8 @@ jobs:
 
       - name: Install ansible-core and hvac
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-hvac
-          sudo apt-get install -y ansible-core
+          pipx install ansible-core
+          pipx inject ansible-core hvac
 
       - name: Setup SSH key
         run: |
