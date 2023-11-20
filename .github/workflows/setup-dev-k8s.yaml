@@ -47,6 +47,12 @@ jobs:
           unzip vault.zip
           sudo install vault /usr/local/bin
 
+      - name: Install ansible-core and hvac
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-hvac
+          sudo apt-get install -y ansible-core
+
       - name: Setup SSH key
         run: |
           ssh-keygen -t ed25519 -f ${HOME}/.ssh/id_ed25519 -N ""
@@ -69,11 +75,6 @@ jobs:
           Host dev-kube-*
             ProxyJump bastion
           EOF
-
-      - name: Install Ansible and playbook dependencies
-        run: |
-          pipx install ansible-core
-          pipx install hvac --include-deps
 
       - name: Run playbook
         run: |
