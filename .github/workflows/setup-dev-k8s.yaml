@@ -73,7 +73,7 @@ jobs:
       - name: Install Ansible and playbook dependencies
         run: |
           pipx install ansible-core
-          pipx install hvac
+          pipx install hvac --include-deps
 
       - name: Run playbook
         run: |
