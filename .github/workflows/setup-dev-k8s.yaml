@@ -70,8 +70,10 @@ jobs:
             ProxyJump bastion
           EOF
 
-      - name: Install Ansible
-        run: pipx install ansible-core
+      - name: Install Ansible and playbook dependencies
+        run: |
+          pipx install ansible-core
+          pipx install hvac
 
       - name: Run playbook
         run: |
