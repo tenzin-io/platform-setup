@@ -7,7 +7,10 @@
         zpool_name: data
         zpool_disks: /dev/nvme0n2 /dev/nvme0n3 /dev/nvme0n4
         filesystems:
-          - name: dev-data 
+          - name: dev-k8s
             clients:
-              - dev-kube-1.lan
+              - dev-kube-1
+              - dev-kube-2
+              - dev-kube-3
+              - dev-kube-4
 ...
