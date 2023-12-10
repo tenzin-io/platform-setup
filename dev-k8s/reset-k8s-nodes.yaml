@@ -4,6 +4,6 @@
   gather_facts: false
   tasks:
     - name: Revert snapshot
-      command: "vim-cmd vmsvc/snapshot.revert {{ vm_id }} 1 false"
+      command: "vim-cmd vmsvc/snapshot.revert {{ vm_id }} {{ snapshot_id }} false"
       delegate_to: "{{ groups['my_esxi_host'] | first }}"
 ...
