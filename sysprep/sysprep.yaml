@@ -3,6 +3,22 @@
   hosts: my_hosts
   become: true
 
-  roles:
-    - name: sshd_config
+  tasks:
+    - name: PasswordAuthentication is disabled
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: ^PasswordAuthentication
+        line: PasswordAuthentication no
+      notify: reload ssh service
+
+    - name: Update auth_principals for root access
+      copy:
+        content: packer
+        dest: /etc/ssh/auth_principals/root
+
+  handlers:
+    - name: reload ssh service
+      service:
+        name: ssh
+        state: reloaded
 ...

@@ -1,7 +1,0 @@
----
-- name: PasswordAuthentication is disabled
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: ^PasswordAuthentication
-    line: PasswordAuthentication no
-  notify: reload ssh service
