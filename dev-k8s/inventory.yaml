@@ -4,13 +4,13 @@ my_k8s_cluster:
       hosts:
         dev-kube-1:
           vm_id: 32
-          keepalived_interface: ens160
+          keepalived_interface: enp0s3
           keepalived_virtual_address: 192.168.200.231
     control_plane:
       hosts:
         dev-kube-2:
           vm_id: 37
-          keepalived_interface: ens160
+          keepalived_interface: enp0s3
           keepalived_virtual_address: 192.168.200.231
     worker_nodes:
       hosts:
@@ -23,10 +23,6 @@ my_k8s_cluster:
     control_plane_endpoint_name: dev-k8s
     control_plane_endpoint_address: 192.168.200.231
     kubeconfig_secrets_path: secrets/data/kubeconfig/dev-k8s
+    ansible_become: True
+    ansible_ssh_user: packer
     ansible_become_password: packer
-
-my_esxi_host:
-  hosts:
-    vsphere:
-      ansible_ssh_user: root
-      ansible_python_interpreter: /bin/python
