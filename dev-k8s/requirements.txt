@@ -1,0 +1,3 @@
+ansible==8.7.0
+ansible-core==2.15.9
+hvac==2.1.0
