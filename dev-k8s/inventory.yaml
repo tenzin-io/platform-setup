@@ -5,14 +5,11 @@ my_k8s_cluster:
         dev-kube-1:
     control_plane:
       hosts:
-        dev-kube-2:
     worker_nodes:
       hosts:
-        dev-kube-3:
-        dev-kube-4:
   vars:
     # keepalived
-    keepalived_interface: enp0s3
+    keepalived_interface: ens33
     keepalived_virtual_address: 192.168.200.231
 
     # kubernetes
