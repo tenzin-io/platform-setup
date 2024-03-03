@@ -67,9 +67,6 @@ jobs:
           Host bastion
             User packer
             Hostname console
-
-          Host vsphere
-            ProxyJump bastion
           
           Host dev-kube-*
             ProxyJump bastion
