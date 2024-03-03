@@ -1,7 +1,6 @@
 my_hosts:
   hosts:
-    debian-97:
-    netns-1:
-    netns-2:
+    console:
+    dev-kube-1:
   vars:
     ansible_become_password: packer
