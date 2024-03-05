@@ -7,6 +7,7 @@ my_k8s_cluster:
       hosts:
     worker_nodes:
       hosts:
+        dev-kube-2:
   vars:
     # keepalived
     keepalived_interface: ens33
