@@ -1,0 +1,5 @@
+---
+- name: Setup my fileservers
+  hosts: storage_nodes
+  roles:
+    - name: setup-fileserver

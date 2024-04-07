@@ -1,12 +1,17 @@
-my_k8s_cluster:
+my_cluster:
   children:
     bootstrap_node:
       hosts:
-        kube-1:
+        kube-1.local:
     control_plane:
       hosts:
     worker_nodes:
       hosts:
+    storage_nodes:
+      hosts:
+        kube-1.local:
+          nfs_clients:
+          - kube-1.local
   vars:
     # keepalived
     keepalived_interface: ens160
