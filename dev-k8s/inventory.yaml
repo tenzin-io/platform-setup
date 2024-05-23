@@ -2,29 +2,19 @@ my_cluster:
   children:
     bootstrap_node:
       hosts:
-        kube-1.local:
+        kube-1:
     control_plane:
       hosts:
     worker_nodes:
       hosts:
-    storage_nodes:
-      hosts:
-        kube-1.local:
-          nfs_clients:
-          - kube-1.local
   vars:
     # keepalived
-    keepalived_interface: ens160
-    keepalived_virtual_address: 192.168.7.11
+    keepalived_interface: eth0
+    keepalived_virtual_address: 192.168.200.231
 
     # kubernetes
     control_plane_endpoint_name: dev-k8s
-    control_plane_endpoint_address: 192.168.7.11
-
-    # vault
-    kubeconfig_secrets_path: secrets/data/kubeconfig/dev-k8s
+    control_plane_endpoint_address: 192.168.200.231
 
     # ansible
-    # ansible_become: True
-    # ansible_ssh_user: packer
-    # ansible_become_password: packer
+    ansible_ssh_user: root
