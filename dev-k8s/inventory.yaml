@@ -3,6 +3,7 @@ my_cluster:
     bootstrap_node:
       hosts:
         kube-1:
+          skip_phase_mark_control_plane: True
     control_plane:
       hosts:
     worker_nodes:
