@@ -1,6 +1,0 @@
-my_hosts:
-  hosts:
-    console:
-    dev-kube-1:
-  vars:
-    ansible_become_password: packer
