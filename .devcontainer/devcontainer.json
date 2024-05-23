@@ -13,7 +13,7 @@
 			"helm": "latest",
 			"minikube": "none"
 		},
-		"ghcr.io/devcontainers-contrib/features/ansible:2": {
+		"ghcr.io/devcontainers/features/python:1": {
 			"version": "latest"
 		}
 	},
