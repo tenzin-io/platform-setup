@@ -168,11 +168,20 @@
         state: link
       loop: '{{ bare_hosts }}'
 
+    - name: Enable and start services
+      service:
+        name: '{{ item }}'
+        state: started
+        enabled: True
+      loop:
+        - dnsmasq
+        - nginx
+
   handlers:
     - name: reload dnsmasq
       service:
         name: dnsmasq
-        state: reloaded
+        state: restarted
 
     - name: reload networking
       service:
