@@ -1,0 +1,2 @@
+#!ipxe
+dhcp && chain http://${next-server}/ubuntu-install.ipxe || shell
