@@ -8,7 +8,7 @@
   vars:
     bare_hosts:
       - hostname: tenzins-pc
-        macaddr: 9c-6b-00-3a-41-52
+        macaddr: a8-a1-59-7d-7c-81
 
   pre_tasks:
     - name: Check for eth0 interface
@@ -135,7 +135,7 @@
         state: directory
       loop:
         - /var/www/ipxehttp
-        - /var/www/ipxehttp/ubuntu-22.04.4-live-server-amd64
+        - /var/www/ipxehttp/ubuntu-24.04-live-server-amd64
 
     - name: Send over ubuntu-install.ipxe
       copy:
