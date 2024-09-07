@@ -61,12 +61,6 @@
     - name: Auto-start the vm-network
       command: virsh net-autostart vm-network
 
-    - name: Install nvidia drivers
-      apt:
-        update_cache: True
-        name: nvidia-driver-550-server
-        state: present
-
   handlers:
     - name: update grub
       command: update-grub
