@@ -61,6 +61,21 @@
     - name: Auto-start the vm-network
       command: virsh net-autostart vm-network
 
+    - name: Make /cloud-images folder
+      file:
+        path: /cloud-images
+        state: directory
+
+    - name: Get ubuntu cloud-image
+      get_url:
+        url: https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+        dest: /cloud-images/noble-server-cloudimg-amd64.img
+
+    - name: Send over vm-installer scripts
+      copy:
+        src: vm-installer
+        dest: /root
+
   handlers:
     - name: update grub
       command: update-grub
