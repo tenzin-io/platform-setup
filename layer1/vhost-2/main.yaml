@@ -1,0 +1,62 @@
+- name: Setup vhost-2
+  hosts: vhost-2
+  vars:
+    ansible_ssh_user: ansible
+    ansible_ssh_private_key_file: ansible.key
+    ansible_become: True
+  tasks:
+    - name: Update /etc/default/grub
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids=10de:1b06,10de:10ef vfio-pci.disable_vga=1"'
+      notify: update grub
+
+    - name: Blacklist nvidia modules
+      copy:
+        dest: /etc/modprobe.d/no-nvidia.conf
+        content: |-
+          blacklist nvidia
+          blacklist nvidia_drm
+          blacklist nvidia_uvm
+          blacklist nvidia_modeset
+          blacklist nvidiafb
+          blacklist nouveau
+      notify: update initramfs
+
+    - name: Create a libvirt definitions folder
+      file:
+        path: /etc/libvirt/custom
+        state: directory
+
+    - name: Send over vm-network
+      copy:
+        src: vm-network.xml
+        dest: /etc/libvirt/custom/vm-network.xml
+
+    - name: Define the vm-network
+      command: virsh net-define /etc/libvirt/custom/vm-network.xml
+
+    - name: Check vm-network status
+      shell: virsh net-info vm-network | grep ^Active
+      register: check_network_active
+    
+    - name: Start the vm-network
+      command: virsh net-start vm-network
+      when: "'no' in check_network_active.stdout"
+
+    - name: Auto-start the vm-network
+      command: virsh net-autostart vm-network
+
+    - name: Install nvidia drivers
+      apt:
+        update_cache: True
+        name: nvidia-driver-550-server
+        state: present
+
+  handlers:
+    - name: update grub
+      command: update-grub
+
+    - name: update initramfs
+      command: update-initramfs -u
