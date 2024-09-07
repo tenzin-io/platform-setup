@@ -6,8 +6,12 @@
     - secrets.yaml
 
   vars:
-    bare_hosts:
-      - hostname: tenzins-pc
+    ansible_ssh_user: root
+    ansible_ssh_private_key_file: ansible.key
+    baremetal_hosts:
+      - hostname: vhost-1
+        macaddr: 9c-6b-00-50-5b-34
+      - hostname: vhost-2
         macaddr: a8-a1-59-7d-7c-81
 
   pre_tasks:
@@ -146,27 +150,27 @@
       file:
         path: /var/www/ipxehttp/{{ item.hostname }}
         state: directory
-      loop: '{{ bare_hosts }}'
+      loop: '{{ baremetal_hosts }}'
 
     - name: Send over user-data
       template:
         src: user-data.j2
         dest: /var/www/ipxehttp/{{ item.hostname }}/user-data
-      loop: '{{ bare_hosts }}'
+      loop: '{{ baremetal_hosts }}'
 
     - name: Send over meta-data
       copy:
         dest: /var/www/ipxehttp/{{ item.hostname }}/meta-data
         content: |-
           # placeholder meta-data file for {{ item.hostname }}
-      loop: '{{ bare_hosts }}'
+      loop: '{{ baremetal_hosts }}'
 
     - name: Create a symlink to hostname folder
       file:
         src: /var/www/ipxehttp/{{ item.hostname }}
         dest: /var/www/ipxehttp/{{ item.macaddr }}
         state: link
-      loop: '{{ bare_hosts }}'
+      loop: '{{ baremetal_hosts }}'
 
     - name: Enable and start services
       service:

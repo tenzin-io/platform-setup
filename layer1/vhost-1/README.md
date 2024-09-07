@@ -1,6 +1,6 @@
 # README
 
-An Ansible playbook to setup my machine, `tenzins-pc`.
+An Ansible playbook to setup my machine, `vhost-1`
 
 ## Helper
 - Find the device ids of the GPU

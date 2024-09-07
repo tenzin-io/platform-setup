@@ -22,15 +22,12 @@ autoinstall:
   ssh:
     install-server: yes
     authorized-keys:
-      - ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAH6Zq6a3bli/LZgJeNVzB/lXPWUMBxh79uFoouwgOMM6FJQPeRf7l9pWgKWHbsx0l63DqT1rWxskVjcmIaqX77y/gFBuDpQtICgTdV1D8mJHeq4FhpMxqcTyW0Vpp5qkRloT9JbpjvB/rGmnx7P+oPkcpLVDJ9+KQctJCQjpBHC/IMh/g==
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDTff5vwm59MW94Tp/mf1G8FN8DA7fFnQYI1erAD8c4/
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJSFDT0pkn67ZNKhhHE07Jtbf/G/Z8mM/QDbBLawYth4
-      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIATlOA9WaAXj0iZa4fuJa76LiMgu7OT4i1iVbmq04DQI
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIG1AiUhgFxPxgvYCP0xzO9T6bY99sapCWuSltrEM7Zc1 ansible
 
   identity:
     hostname: {{ item.hostname }}
-    username: tenzin
-    password: {{ crypted_password }}
+    username: ansible
+    password: {{ console_password }}
 
   storage:
     layout:
@@ -49,7 +46,6 @@ autoinstall:
     disable_root: false
 
   late-commands:
-    - echo 'tenzin ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/tenzin # allow sudo without password
+    - echo 'ansible ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/ansible # allow sudo without password
     - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"/' /etc/default/grub
     - curtin in-target --target /target -- update-grub2
-
