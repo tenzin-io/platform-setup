@@ -1,7 +1,7 @@
 #cloud-config
 hostname: nvidia-2
 fqdn: nvidia-2.virtual.lan
-manage_etc_hosts: true
+manage_etc_hosts: False
 
 users:
   - name: ansible
