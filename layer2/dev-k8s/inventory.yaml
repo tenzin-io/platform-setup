@@ -1,0 +1,18 @@
+my_cluster:
+  children:
+    bootstrap_node:
+      hosts:
+        nvidia-1:
+          control_plane_endpoint_name: k8s-1
+          skip_phase_mark_control_plane: True
+        nvidia-2:
+          control_plane_endpoint_name: k8s-2
+          skip_phase_mark_control_plane: True
+    control_plane:
+      hosts:
+    worker_nodes:
+      hosts:
+  vars:
+    ansible_ssh_user: ansible
+    ansible_ssh_private_key_file: ansible.key
+    ansible_become: True
