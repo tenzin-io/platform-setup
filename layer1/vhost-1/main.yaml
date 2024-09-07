@@ -5,6 +5,19 @@
     ansible_ssh_private_key_file: ansible.key
     ansible_become: True
   tasks:
+    - name: Update OS physical volume
+      lvg:
+        vg: ubuntu-vg
+        pvs: /dev/nvme1n1p3,/dev/nvme0n1p1
+        pvresize: True
+
+    - name: Update OS logical vol
+      lvol:
+        vg: ubuntu-vg
+        lv: ubuntu-lv
+        size: 95%PVS
+        resizefs: True
+
     - name: Update /etc/default/grub
       lineinfile:
         path: /etc/default/grub
