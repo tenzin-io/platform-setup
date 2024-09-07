@@ -5,9 +5,9 @@
   <bridge name='virbr1' stp='on' delay='0'/>
   <mac address='52:54:00:83:28:df'/>
   <domain name='virtual.lan' localOnly='yes'/>
-  <ip address='192.168.201.1' netmask='255.255.255.0'>
+  <ip address='10.255.1.1' netmask='255.255.255.0'>
     <dhcp>
-      <range start='192.168.201.2' end='192.168.201.254'/>
+      <range start='10.255.1.100' end='10.255.1.199'/>
     </dhcp>
   </ip>
 </network>

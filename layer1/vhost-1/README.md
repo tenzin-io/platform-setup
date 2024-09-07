@@ -5,7 +5,7 @@ An Ansible playbook to setup my machine, `vhost-1`
 ## Helper
 - Find the device ids of the GPU
 ```bash
-# lspci -nn | grep -i nvidia
-06:00.0 VGA compatible controller [0300]: NVIDIA Corporation AD103 [GeForce RTX 4070 Ti SUPER] [10de:2705] (rev a1)
-06:00.1 Audio device [0403]: NVIDIA Corporation Device [10de:22bb] (rev a1)
+root@vhost-1:~# lspci -nn | grep -i nvidia
+07:00.0 VGA compatible controller [0300]: NVIDIA Corporation GP102 [GeForce GTX 1080 Ti] [10de:1b06] (rev a1)
+07:00.1 Audio device [0403]: NVIDIA Corporation GP102 HDMI Audio Controller [10de:10ef] (rev a1)
 ```
