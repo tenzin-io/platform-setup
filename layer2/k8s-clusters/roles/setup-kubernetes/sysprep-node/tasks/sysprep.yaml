@@ -1,0 +1,52 @@
+---
+- name: Turn off swap
+  command: swapoff -a
+  changed_when: False
+  
+- name: Disable swap in /etc/fstab
+  lineinfile:
+    path: /etc/fstab
+    regexp: '.*\sswap\s+sw\s+.*'
+    state: absent
+
+- name: Enable kernel modules for Kubernetes at boot
+  copy:
+    dest: /etc/modules-load.d/kubernetes.conf
+    content: |-
+      overlay
+      br_netfilter
+
+- name: Load kernel modules for Kubernetes
+  command: 'modprobe {{ item }}'
+  loop:
+    - overlay
+    - br_netfilter
+  changed_when: False
+
+- name: Add sysctl parameters for Kubernetes
+  sysctl:
+    name: '{{ param.name }}'
+    value: '{{ param.value }}'
+  loop:
+    - name: net.bridge.bridge-nf-call-iptables
+      value: 1
+    - name: net.bridge.bridge-nf-call-ip6tables
+      value: 1
+    - name: net.ipv4.ip_forward
+      value: 1
+    - name: fs.inotify.max_user_watches
+      value: 524288
+    - name: fs.inotify.max_user_instances
+      value: 8192
+    - name: vm.max_map_count
+      value: 524288
+    - name: kernel.pid_max
+      value: 4194304
+    - name: vm.overcommit_memory
+      value: 1
+    - name: kernel.panic
+      value: 10
+    - name: kernel.panic_on_oops
+      value: 1
+  loop_control:
+    loop_var: param

@@ -1,0 +1,32 @@
+---
+- name: Ensure that keepalived variables are defined
+  assert:
+    that:
+      - keepalived_interface is defined
+      - keepalived_router_id is defined
+      - keepalived_virtual_address is defined
+      - keepalived_cluster_password is defined
+
+- name: Install keeaplived
+  apt:
+    name: keepalived
+    state: present
+
+- name: Enable keepalived service
+  service:
+    name: keepalived
+    enabled: yes
+
+- name: Send over check_port.sh script
+  copy:
+    src: check_port.sh
+    dest: /etc/keepalived/check_port.sh
+    mode: 0755
+
+- name: Send keepalived.conf
+  template:
+    src: keepalived.conf
+    dest: /etc/keepalived/keepalived.conf
+  notify: restart keepalived
+
+- meta: flush_handlers

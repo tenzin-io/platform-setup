@@ -1,0 +1,27 @@
+---
+# - name: Gather facts
+#   setup:
+#     filter:
+#       - 'ansible_distribution_release'
+#       - 'ansible_distribution'
+# 
+# - name: Assert that host is Debian bookworm
+#   assert:
+#     that:
+#       - ansible_facts["distribution_release"] == "bookworm"
+#       - ansible_facts["distribution"] == "Debian"
+#       - groups["bootstrap_node"] | length == 1
+
+- name: Get the bootstrap node hostname
+  set_fact:
+    bootstrap_node: "{{ groups['bootstrap_node'] | first }}"
+
+- include_tasks: bootstrap-node.yaml
+  when: "'bootstrap_node' in group_names"
+
+- include_tasks: control-plane-node.yaml
+  when: "'control_plane' in group_names"
+
+- include_tasks: worker-node.yaml
+  when: "'worker_nodes' in group_names"
+

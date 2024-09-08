@@ -1,0 +1,59 @@
+---
+
+#
+# Install containerd container rumtime
+#
+- name: Extract containerd tarball x86_64
+  unarchive:
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/
+    remote_src: yes
+  when: ansible_machine == "x86_64"
+
+- name: Extract containerd tarball aarch64
+  unarchive:
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-arm64.tar.gz"
+    dest: /usr/local/
+    remote_src: yes
+  when: ansible_machine == "aarch64"
+
+- name: Create containerd config folder
+  file:
+    state: directory
+    path: /etc/containerd
+
+- name: Create the containerd config.toml file
+  copy:
+    src: config.toml
+    dest: /etc/containerd/config.toml
+
+- name: Get the systemd service file
+  get_url:
+    url: "https://raw.githubusercontent.com/containerd/containerd/v{{ containerd_version }}/containerd.service"
+    dest: /usr/lib/systemd/system/containerd.service
+
+- name: Enable containerd service
+  systemd:
+    name: containerd.service
+    state: started
+    enabled: yes
+    daemon_reload: yes
+
+- name: Extract crictl tarball amd64
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+  when: ansible_machine == "x86_64"
+
+- name: Extract crictl tarball arm64
+  unarchive:
+    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-arm64.tar.gz"
+    dest: /usr/local/bin
+    remote_src: yes
+  when: ansible_machine == "aarch64"
+
+- name: crictl.yaml
+  copy:
+    src: crictl.yaml
+    dest: /etc/crictl.yaml

@@ -1,0 +1,6 @@
+# see: https://github.com/kubernetes-sigs/cri-tools/blob/master/docs/crictl.md
+runtime-endpoint: unix:///run/containerd/containerd.sock
+image-endpoint: unix:///run/containerd/containerd.sock
+timeout: 2
+debug: true
+pull-image-on-create: false

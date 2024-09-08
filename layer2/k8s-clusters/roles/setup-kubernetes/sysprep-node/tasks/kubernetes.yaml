@@ -1,0 +1,89 @@
+---
+- name: Install packages
+  apt:
+    name: '{{ item }}'
+    state: latest
+    update_cache: True
+  loop:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg
+    - conntrack
+    - ethtool
+    - ipvsadm
+    - jq
+    - socat
+    - pigz
+    - chrony
+    - iptables
+
+- name: Install kubeadm
+  get_url:
+    url: "{{ lookup('eks_release', 'kubeadm', 'arm64', 'linux') }}"
+    dest: /usr/bin/kubeadm
+    mode: 0755
+  when: ansible_machine == "aarch64"
+
+- name: Install kubelet
+  get_url:
+    url: "{{ lookup('eks_release', 'kubelet', 'arm64', 'linux') }}"
+    dest: /usr/bin/kubelet
+    mode: 0755
+  when: ansible_machine == "aarch64"
+
+- name: Install kubectl
+  get_url:
+    url: "{{ lookup('eks_release', 'kubectl', 'arm64', 'linux') }}"
+    dest: /usr/bin/kubectl
+    mode: 0755
+  when: ansible_machine == "aarch64"
+
+- name: Install kubeadm
+  get_url:
+    url: "{{ lookup('eks_release', 'kubeadm', 'amd64', 'linux') }}"
+    dest: /usr/bin/kubeadm
+    mode: 0755
+  when: ansible_machine == "x86_64"
+
+- name: Install kubelet
+  get_url:
+    url: "{{ lookup('eks_release', 'kubelet', 'amd64', 'linux') }}"
+    dest: /usr/bin/kubelet
+    mode: 0755
+  when: ansible_machine == "x86_64"
+
+- name: Install kubectl
+  get_url:
+    url: "{{ lookup('eks_release', 'kubectl', 'amd64', 'linux') }}"
+    dest: /usr/bin/kubectl
+    mode: 0755
+  when: ansible_machine == "x86_64"
+
+- name: Send over kubelet.service
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/release/v0.16.5/cmd/krel/templates/latest/kubelet/kubelet.service
+    dest: /etc/systemd/system/kubelet.service
+
+- name: Create /etc/systemd/system/kubelet.service.d
+  file:
+    path: /etc/systemd/system/kubelet.service.d
+    state: directory
+
+- name: Send over the kubeadm kubelet addition
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/release/v0.16.5/cmd/krel/templates/latest/kubeadm/10-kubeadm.conf
+    dest: /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Start kubelet service
+  systemd:
+    name: kubelet
+    state: started
+    enabled: yes
+
+- name: Pull the kubeadm images
+  command: kubeadm config images pull

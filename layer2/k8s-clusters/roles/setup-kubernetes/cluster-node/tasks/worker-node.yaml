@@ -1,0 +1,12 @@
+---
+- name: Generate worker node join command
+  command: 'kubeadm token create --print-join-command'
+  register: join_command
+  delegate_to: "{{ bootstrap_node }}"
+
+- name: Join node as worker to Kubernetes cluster
+  command: "{{ join_command.stdout }}"
+  args:
+    creates: /etc/kubernetes/kubelet.conf
+
+...
