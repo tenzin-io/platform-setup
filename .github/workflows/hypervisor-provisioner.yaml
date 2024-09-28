@@ -29,8 +29,8 @@ jobs:
           method: jwt
           exportToken: true
           secrets: |
-            secrets/data/tailscale/github-actions client_id | TS_OAUTH_CLIENT_ID ;
-            secrets/data/tailscale/github-actions client_secret | TS_OAUTH_CLIENT_SECRET ;
+            secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
+            secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
             secrets/data/ansible-playbooks/ansible-ssh-user/ansible SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
             secrets/data/ansible-playbooks/ansible-vault vault_password | ANSIBLE_VAULT_PASSWORD
 
