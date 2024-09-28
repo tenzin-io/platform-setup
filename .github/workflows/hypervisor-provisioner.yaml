@@ -43,17 +43,19 @@ jobs:
 
       - name: Setup secrets
         run: |
+          test -e ~/.ssh || mkdir ~/.ssh
+
           cat <<EOF > ansible.key
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
           chmod 0600 ansible.key
+          cp ansible.key ~/.ssh/id_ed25519
 
           cat <<EOF > vault_password.txt
           ${{ steps.vault-secrets.outputs.ANSIBLE_VAULT_PASSWORD }}
           EOF
           chmod 0600 vault_password.txt
  
-          test -e ~/.ssh || mkdir ~/.ssh
           cat <<EOF > ~/.ssh/config
           StrictHostKeyChecking no
 
