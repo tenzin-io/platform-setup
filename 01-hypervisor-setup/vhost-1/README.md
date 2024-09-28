@@ -1,6 +1,5 @@
 # vhost-1
-
-An Ansible playbook to setup my machine, `vhost-1`
+An Ansible playbook workspace to setup hypervisor `vhost-1`.
 
 ## Helper
 - Find the device ids of the GPU
