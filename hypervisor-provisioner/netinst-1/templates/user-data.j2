@@ -14,7 +14,7 @@ autoinstall:
         access-points:
           "{{ wifi_name }}":
             password: {{ wifi_password }}
-            band: 5GHz
+            band: {{ wifi_band }}
         dhcp4: true
         dhcp4-overrides:
           route-metric: 100

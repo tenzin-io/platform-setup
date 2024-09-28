@@ -7,6 +7,8 @@ The secrets.yaml contain the WiFi name, password and the console password to set
 ```yaml
 wifi_name: 
 wifi_password: 
+wifi_band:
+
 console_username:
 console_password: 
 automation_ssh_pubkey:
