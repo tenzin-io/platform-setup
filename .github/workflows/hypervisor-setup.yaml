@@ -66,7 +66,7 @@ jobs:
             User root
             Hostname tenzins-pi
           
-          Host netinst-1.lan
+          Host vhost-1.lan
             ProxyJump bastion
           EOF
 
