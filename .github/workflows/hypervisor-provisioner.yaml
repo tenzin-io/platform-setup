@@ -4,7 +4,6 @@ on:
   workflow_dispatch:
 
 env:
-  VAULT_ADDR: https://vault.tenzin.io
   WORKFLOW_DIR: 00-hypervisor-provisioner/netinst-1
 
 jobs:
