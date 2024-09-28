@@ -1,4 +1,0 @@
-my_fileservers:
-  hosts:
-    zfs-1:
-      ansible_become_password: packer

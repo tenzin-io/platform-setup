@@ -1,0 +1,67 @@
+- name: Setup vhost-1
+  hosts: vhost-1
+  vars:
+    ansible_become: True
+    has_nvidia_gpu: False
+
+  tasks:
+    - name: Update OS physical volume
+      lvg:
+        vg: ubuntu-vg
+        pvs: /dev/disk/by-id/nvme-CT1000P3PSSD8_2233E6567FBE-part3,/dev/disk/by-id/nvme-SHPP41-1000GM_AJD1N595713201V0H-part3
+        pvresize: True
+
+    - name: Update OS logical vol
+      lvol:
+        vg: ubuntu-vg
+        lv: ubuntu-lv
+        size: 95%PVS
+        resizefs: True
+
+    - name: Update /etc/default/grub
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt"'
+      notify: update grub
+      when: has_nvidia_gpu == False
+
+    - name: Update /etc/default/grub
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids=10de:2504,10de:228e vfio-pci.disable_vga=1"'
+      notify: update grub
+      when: has_nvidia_gpu == True
+
+    - name: Blacklist nvidia modules
+      copy:
+        dest: /etc/modprobe.d/no-nvidia.conf
+        content: |-
+          blacklist nvidia
+          blacklist nvidia_drm
+          blacklist nvidia_uvm
+          blacklist nvidia_modeset
+          blacklist nvidiafb
+          blacklist nouveau
+      notify: update initramfs
+      when: has_nvidia_gpu == True
+
+    - name: Create /etc/apparmor.d/abstractions/libvirt-qemu.d
+      file:
+        path: /etc/apparmor.d/abstractions/libvirt-qemu.d
+        state: directory
+
+    - name: Update apparmor for libvirt-qemu extra paths
+      copy:
+        content: |-
+          /var/lib/libvirt/images/* rwk,
+          /var/lib/libvirt/machines/* rwk,
+        dest: /etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
+
+  handlers:
+    - name: update grub
+      command: update-grub
+
+    - name: update initramfs
+      command: update-initramfs -u

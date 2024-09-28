@@ -1,2 +1,2 @@
 # README
-A repository to setup my home lab machines.
+A repository to setup my infrastructure.

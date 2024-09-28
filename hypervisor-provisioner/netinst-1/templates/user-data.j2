@@ -1,0 +1,50 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp4-overrides:
+          route-metric: 1000
+    wifis:
+      wlan0:
+        access-points:
+          "{{ wifi_name }}":
+            password: {{ wifi_password }}
+            band: 5GHz
+        dhcp4: true
+        dhcp4-overrides:
+          route-metric: 100
+
+  ssh:
+    install-server: yes
+    authorized-keys:
+      - {{ automation_ssh_pubkey }}
+
+  identity:
+    hostname: {{ item.hostname }}
+    username: {{ console_username }}
+    password: {{ console_password }}
+
+  storage:
+    layout:
+      name: lvm
+
+  packages:
+    - qemu-kvm
+    - libvirt-daemon-system
+    - libvirt-clients
+    - bridge-utils
+    - genisoimage
+    - wpasupplicant
+
+  user-data:
+    disable_root: false
+
+  late-commands:
+    - echo '{{ console_username }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/{{ console_username }} # allow sudo without password
+    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"/' /etc/default/grub
+    - curtin in-target --target /target -- update-grub2

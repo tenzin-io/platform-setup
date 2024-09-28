@@ -1,0 +1,6 @@
+# terraform state files and backup
+terraform.tfstate*
+local.tfstate*
+
+.terraform
+noble-server-cloudimg-amd64.img
