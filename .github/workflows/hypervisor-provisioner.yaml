@@ -58,10 +58,10 @@ jobs:
           StrictHostKeyChecking no
 
           Host bastion
-            User packer
-            Hostname console
+            User root
+            Hostname tenzins-pi
           
-          Host dev-kube-*
+          Host netinst-1
             ProxyJump bastion
           EOF
 
