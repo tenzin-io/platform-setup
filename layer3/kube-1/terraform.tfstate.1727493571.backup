@@ -1,0 +1,56 @@
+{
+  "version": 4,
+  "terraform_version": "1.9.6",
+  "serial": 19,
+  "lineage": "bd274d0a-7b5a-0ab3-0108-469031e93192",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "libvirt_pool",
+      "name": "data_pool",
+      "provider": "provider[\"registry.terraform.io/dmacvicar/libvirt\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "allocation": 0,
+            "available": 0,
+            "capacity": 0,
+            "id": "23e063c1-dd92-4045-b5ee-f56e9e6396f6",
+            "name": "data",
+            "path": "/data",
+            "type": "dir",
+            "xml": []
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "libvirt_pool",
+      "name": "ubuntu_pool",
+      "provider": "provider[\"registry.terraform.io/dmacvicar/libvirt\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "allocation": 57085308928,
+            "available": 1809804144640,
+            "capacity": 1866889453568,
+            "id": "ebca04fd-62cf-49bb-a6f6-cceb7f6b3f06",
+            "name": "ubuntu",
+            "path": "/data/ubuntu",
+            "type": "dir",
+            "xml": []
+          },
+          "sensitive_attributes": [],
+          "private": "bnVsbA=="
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}

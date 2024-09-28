@@ -39,6 +39,4 @@ sudo virt-install \
 --console pty,target_type=serial \
 --import \
 --network network=vm-network,model=virtio \
---host-device 01:00.0 \
---host-device 01:00.1 \
 --noautoconsole

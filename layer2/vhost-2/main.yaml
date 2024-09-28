@@ -8,7 +8,7 @@
     - name: Update OS physical volume
       lvg:
         vg: ubuntu-vg
-        pvs: /dev/nvme0n1p3,/dev/nvme1n1p1
+        pvs: /dev/disk/by-id/nvme-CT1000P3PSSD8_2233E6567FBE-part1,/dev/disk/by-id/nvme-SHPP41-1000GM_AJD1N595713201V0H-part3
         pvresize: True
 
     - name: Update OS logical vol

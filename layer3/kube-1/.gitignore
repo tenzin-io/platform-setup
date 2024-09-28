@@ -1,0 +1,5 @@
+# terraform state files and backup
+terraform.tfstate*
+local.tfstate*
+
+.terraform
