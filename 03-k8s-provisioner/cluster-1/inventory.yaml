@@ -2,11 +2,8 @@ my_cluster:
   children:
     bootstrap_node:
       hosts:
-        nvidia-1:
-          control_plane_endpoint_name: k8s-1
-          skip_phase_mark_control_plane: True
-        nvidia-2:
-          control_plane_endpoint_name: k8s-2
+        kube-1:
+          control_plane_endpoint_name: cluster-1
           skip_phase_mark_control_plane: True
     control_plane:
       hosts:

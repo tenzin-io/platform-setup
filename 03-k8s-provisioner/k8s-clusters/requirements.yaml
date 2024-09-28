@@ -1,7 +1,0 @@
-- name: setup-kubernetes
-  src: https://github.com/tenzin-io/setup-kubernetes.git
-  version: main
-
-- name: setup-fileserver
-  src: https://github.com/tenzin-io/setup-fileserver.git
-  version: main
