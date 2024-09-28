@@ -37,7 +37,6 @@ module "local_path_provisioner" {
   depends_on = [module.calico]
 }
 
-
 module "metallb" {
   source        = "git::https://github.com/tenzin-io/terraform-tenzin-homelab.git//kubernetes/metallb?ref=main"
   ip_pool_range = "10.255.1.211/32"
@@ -63,36 +62,14 @@ module "prometheus" {
   enable_ingress      = true
   enable_basic_auth   = true
   basic_auth_password = data.vault_generic_secret.basic_auth.data["htpasswd"]
-  prometheus_fqdn     = "prometheus-1.lan"
+  prometheus_fqdn     = "prometheus-1."
   source              = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/prometheus?ref=main"
 }
-
-# module "nvidia_gpu_operator" {
-#   source     = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/nvidia-gpu-operator?ref=main"
-#   gpu_slices = 10
-#   depends_on = [module.calico]
-# }
 
 module "actions_runner" {
   source     = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/actions-runner?ref=main"
   depends_on = [module.calico]
 }
-
-# 
-# module "actions_runner_user" {
-#   depends_on      = [module.actions_runner]
-#   runner_set_name = "tlhakhan"
-#   source          = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/actions-runner-set?ref=main"
-#   runner_image    = "ghcr.io/tenzin-io/actions-runner:0.0.2"
-#   github_config_urls = [
-#     "https://github.com/tlhakhan/learn-wasm",
-#     "https://github.com/tlhakhan/learn-rust"
-#   ]
-#   github_app_id              = data.vault_generic_secret.github_tlhakhan_user.data["github_app_id"]
-#   github_app_installation_id = data.vault_generic_secret.github_tlhakhan_user.data["github_app_installation_id"]
-#   github_app_private_key     = data.vault_generic_secret.github_tlhakhan_user.data["github_app_private_key"]
-# }
-# 
 
 module "actions_runner_org" {
   depends_on                 = [module.actions_runner]
@@ -126,3 +103,27 @@ module "grafana" {
   allowed_github_organization = "tenzin-io"
   grafana_fqdn                = "grafana.tenzin.io"
 }
+
+
+# module "nvidia_gpu_operator" {
+#   source     = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/nvidia-gpu-operator?ref=main"
+#   gpu_slices = 10
+#   depends_on = [module.calico]
+# }
+
+# 
+# module "actions_runner_user" {
+#   depends_on      = [module.actions_runner]
+#   runner_set_name = "tlhakhan"
+#   source          = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/actions-runner-set?ref=main"
+#   runner_image    = "ghcr.io/tenzin-io/actions-runner:0.0.2"
+#   github_config_urls = [
+#     "https://github.com/tlhakhan/learn-wasm",
+#     "https://github.com/tlhakhan/learn-rust"
+#   ]
+#   github_app_id              = data.vault_generic_secret.github_tlhakhan_user.data["github_app_id"]
+#   github_app_installation_id = data.vault_generic_secret.github_tlhakhan_user.data["github_app_installation_id"]
+#   github_app_private_key     = data.vault_generic_secret.github_tlhakhan_user.data["github_app_private_key"]
+# }
+# 
+
