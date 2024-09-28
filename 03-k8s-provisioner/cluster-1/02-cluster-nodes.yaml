@@ -1,5 +1,5 @@
 ---
-- name: Setup my Kubernetes cluster nodes
+- name: Setup Kubernetes cluster nodes
   hosts: control_plane:worker_nodes 
 
   pre_tasks:

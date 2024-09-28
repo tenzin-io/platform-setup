@@ -1,0 +1,3 @@
+- import_playbook: 00-sysprep-nodes.yaml
+- import_playbook: 01-bootstrap-node.yaml
+- import_playbook: 02-cluster-nodes.yaml

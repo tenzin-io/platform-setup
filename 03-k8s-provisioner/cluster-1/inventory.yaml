@@ -1,4 +1,4 @@
-my_cluster:
+k8s_cluster:
   children:
     bootstrap_node:
       hosts:

@@ -1,5 +1,5 @@
 ---
-- name: Setup my Kubernetes bootstrap node
+- name: Setup Kubernetes bootstrap node
   hosts: bootstrap_node 
 
   roles:
