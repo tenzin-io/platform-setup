@@ -43,8 +43,11 @@ jobs:
 
       - name: Setup secrets
         run: |
+
+          # make ~/.ssh folder
           test -e ~/.ssh || mkdir ~/.ssh
 
+          # setup secrets
           cat <<EOF > ansible.key
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
@@ -56,6 +59,7 @@ jobs:
           EOF
           chmod 0600 vault_password.txt
  
+          # setup ssh proxyjump config
           cat <<EOF > ~/.ssh/config
           StrictHostKeyChecking no
 
@@ -71,8 +75,9 @@ jobs:
         run: |
           ansible-playbook main.yaml
 
-      - name: Clean up SSH key folder
+      - name: Clean up secrets
         run: |
+          test -e ~/.ssh/id_ed25519 && rm -f ~/.ssh/id_ed25519
           test -e ansible.key && rm -f ansible.key
           test -e vault_password.txt && rm -f vault_password.txt
 
