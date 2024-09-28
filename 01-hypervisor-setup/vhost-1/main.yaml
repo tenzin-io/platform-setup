@@ -1,5 +1,5 @@
 - name: Setup vhost-1
-  hosts: vhost-1
+  hosts: vhost-1.lan
   vars:
     ansible_become: True
     has_nvidia_gpu: False
