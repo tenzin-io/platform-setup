@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  WORKFLOW_DIR: 00-hypervisor-setup/vhost-1
+  WORKFLOW_DIR: 01-hypervisor-setup/vhost-1
 
 jobs:
   ansible:
