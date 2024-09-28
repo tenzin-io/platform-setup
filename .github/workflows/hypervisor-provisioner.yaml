@@ -53,6 +53,7 @@ jobs:
           EOF
           chmod 0600 vault_password.txt
  
+          test -e ~/.ssh || mkdir ~/.ssh
           cat <<EOF > ~/.ssh/config
           StrictHostKeyChecking no
 
