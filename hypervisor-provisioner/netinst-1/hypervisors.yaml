@@ -1,0 +1,3 @@
+baremetal_hosts:
+  - hostname: vhost-1
+    macaddr: a8-a1-59-7d-7c-81

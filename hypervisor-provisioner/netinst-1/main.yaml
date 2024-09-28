@@ -4,11 +4,7 @@
 
   vars_files:
     - secrets.yaml
-
-  vars:
-    baremetal_hosts:
-      - hostname: vhost-1
-        macaddr: a8-a1-59-7d-7c-81
+    - hypervisors.yaml
 
   pre_tasks:
     - name: Check for eth0 interface
