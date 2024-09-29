@@ -17,24 +17,27 @@ provider "libvirt" {
   uri = "qemu+ssh://root@vhost-1.lan/system?keyfile=ansible.key&sshauth=privkey&no_verify=1"
 }
 
-// base disk
-resource "libvirt_volume" "ubuntu_cloudimg" {
-  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  name   = "ubuntu-noble-server-cloudimg-amd64.qcow2"
-  pool   = libvirt_pool.datastore.name
-  format = "qcow2"
+// host
+module "hypervisor" {
+  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/hypervisor?ref=main"
+  hypervisor_ip   = "192.168.200.251"
+  vm_network_cidr = "10.255.1.0/24"
+  vm_domain_name  = "vm.vhost-1"
 }
 
-// virtual machines
-module "kube_1" {
-  count           = 0
-  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
-  name            = "kube-1"
-  datastore_name  = libvirt_pool.datastore.name
-  network_id      = libvirt_network.network.id
-  base_volume_id  = libvirt_volume.ubuntu_cloudimg.id
-  cpu_count       = 4
-  memory_size_mib = 12 * 1024  // gib
-  disk_size_mib   = 200 * 1024 // gib
-  addresses       = ["10.255.1.11"]
-}
+// virtual machines on vhost_1
+# module "kube_1" {
+#   providers = {
+#     libvirt = libvirt.vhost_1
+#   }
+#   count           = 0
+#   source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
+#   name            = "kube-1"
+#   datastore_name  = module.vhost_1.datastore_name
+#   network_id      = module.vhost_1.network_id
+#   base_volume_id  = module.vhost_1.base_volume_id
+#   cpu_count       = 4
+#   memory_size_mib = 12 * 1024  // gib
+#   disk_size_mib   = 200 * 1024 // gib
+#   addresses       = ["10.255.1.11"]
+# }
