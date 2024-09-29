@@ -14,9 +14,8 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://root@vhost-1.lan/system?sshauth=privkey&no_verify=1&keyfile=ansible.key"
+  uri = "qemu+ssh://root@vhost-1.lan/system?keyfile=ansible.key&sshauth=privkey&no_verify=1"
 }
-
 data "libvirt_node_info" "node" {}
 
 resource "libvirt_network" "ubuntu_network" {
