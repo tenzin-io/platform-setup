@@ -1,13 +1,13 @@
-name: 00-vm-provisioner/vhost-1
+name: 02-vm-provisioner/vhost-1
 
 on:
   workflow_dispatch:
 
 env:
-  WORKFLOW_DIR: 00-vm-provisioner/vhost-1
+  WORKFLOW_DIR: 02-vm-provisioner/vhost-1
 
 jobs:
-  ansible:
+  terraform:
     runs-on: [ubuntu-latest]
     permissions:
       contents: read
@@ -59,7 +59,7 @@ jobs:
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
-          Host *
+          Host vhost-1
             IdentityFile /dev/null
           EOF
 
