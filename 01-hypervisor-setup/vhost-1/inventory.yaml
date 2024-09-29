@@ -1,0 +1,20 @@
+hypervisors:
+  hosts:
+    vhost-1.lan:
+      has_nvidia_gpu: False
+      root_disks:
+        - /dev/disk/by-id/nvme-CT1000P3PSSD8_2233E6567FBE-part3
+        - /dev/disk/by-id/nvme-SHPP41-1000GM_AJD1N595713201V0H-part3
+    vhost-2.lan:
+      has_nvidia_gpu: True
+      gpu_pci_ids:
+        - 10de:2504
+        - 10de:228e
+      root_disks:
+        - /dev/disk/by-id/nvme-SHPP41-1000GM_AJD1N595713602169-part3
+        - /dev/disk/by-id/nvme-Samsung_SSD_980_1TB_S64ANG0R501397W-part3
+
+  vars:
+    ansible_ssh_user: ansible
+    ansible_ssh_private_key_file: ansible.key
+    ansible_become: True
