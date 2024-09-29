@@ -17,6 +17,7 @@ provider "libvirt" {
   uri = "qemu+ssh://root@vhost-1.lan/system?keyfile=ansible.key&sshauth=privkey&no_verify=1"
 }
 
+// base disk
 resource "libvirt_volume" "ubuntu_cloudimg" {
   source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
   name   = "ubuntu-noble-server-cloudimg-amd64.qcow2"
@@ -24,6 +25,7 @@ resource "libvirt_volume" "ubuntu_cloudimg" {
   format = "qcow2"
 }
 
+// virtual machines
 module "ubuntu_vm" {
   source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
   name           = "kube-1"
