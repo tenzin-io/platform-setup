@@ -72,6 +72,11 @@ jobs:
             IdentityFile ~/.ssh/ansible.key
           EOF
 
+      - name: Get packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mkisofs
+
       - name: Run Terraform Init
         run: terraform init
         
