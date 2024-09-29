@@ -5,13 +5,16 @@ terraform {
       version = "0.8.0"
     }
   }
-  backend "local" {
-    path = "local.tfstate"
+  backend "s3" {
+    bucket         = "tenzin-io"
+    key            = "terraform/vhost-1.state"
+    dynamodb_table = "tenzin-io"
+    region         = "us-east-1"
   }
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://root@vhost-1.lan/system?sshauth=privkey&no_verify=1&keyfile=~/.ssh/ansible"
+  uri = "qemu+ssh://root@vhost-1.lan/system?sshauth=privkey&no_verify=1&keyfile=ansible.key"
 }
 
 data "libvirt_node_info" "node" {}
