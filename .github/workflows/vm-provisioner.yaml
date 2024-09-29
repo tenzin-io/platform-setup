@@ -59,7 +59,14 @@ jobs:
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
-          Host vhost-1
+          StrictHostKeyChecking no
+
+          Host bastion
+            User root
+            Hostname tenzins-pi
+          
+          Host vhost-1.lan
+            ProxyJump bastion
             IdentityFile /dev/null
           EOF
 
@@ -74,8 +81,6 @@ jobs:
 
       - name: Terraform apply
         run: terraform apply -auto-approve
-        env:
-          HTTPS_PROXY: http://tenzins-pi:3128
 
       - name: Clean up secrets
         run: |
