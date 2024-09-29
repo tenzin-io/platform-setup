@@ -56,6 +56,7 @@ jobs:
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
           chmod 0600 ansible.key
+          cp ansible.key ~/.ssh/ansible.key
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
@@ -64,10 +65,11 @@ jobs:
           Host bastion
             User root
             Hostname tenzins-pi
+            IdentityFile ~/.ssh/ansible.key
           
           Host vhost-1.lan
             ProxyJump bastion
-            IdentityFile /dev/null
+            IdentityFile ~/.ssh/ansible.key
           EOF
 
       - name: Run Terraform Init
