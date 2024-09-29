@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - '0-vm-provisioner/**'
+      - '02-vm-provisioner/**'
   workflow_dispatch:
 
 env:
