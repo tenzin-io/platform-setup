@@ -1,6 +1,11 @@
 name: 00-hypervisor-provisioner/netinst-1
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '00-hypervisor-provisioner/**'
   workflow_dispatch:
 
 env:

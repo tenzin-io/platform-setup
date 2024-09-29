@@ -1,6 +1,11 @@
 name: 01-hypervisor-setup/vhost-1
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - '01-hypervisor-setup/**'
   workflow_dispatch:
 
 env:
