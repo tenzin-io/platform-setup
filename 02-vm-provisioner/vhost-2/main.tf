@@ -29,13 +29,13 @@ module "hypervisor" {
 module "kube_1" {
   count           = 1
   source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
-  name            = "kube-1"
+  name            = "kube-0"
   datastore_name  = module.hypervisor.datastore_name
   network_id      = module.hypervisor.network_id
   base_volume_id  = module.hypervisor.base_volume_id
-  cpu_count       = 4
-  memory_size_mib = 12 * 1024  // gib
-  disk_size_mib   = 200 * 1024 // gib
-  addresses       = ["10.255.2.11"]
+  cpu_count       = 5
+  memory_size_mib = 40 * 1024   // gib
+  disk_size_mib   = 1200 * 1024 // gib
+  addresses       = ["10.255.2.10"]
   gpu_pci_bus     = "07"
 }
