@@ -26,18 +26,15 @@ module "hypervisor" {
 }
 
 // virtual machines on vhost_1
-# module "kube_1" {
-#   providers = {
-#     libvirt = libvirt.vhost_1
-#   }
-#   count           = 0
-#   source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
-#   name            = "kube-1"
-#   datastore_name  = module.vhost_1.datastore_name
-#   network_id      = module.vhost_1.network_id
-#   base_volume_id  = module.vhost_1.base_volume_id
-#   cpu_count       = 4
-#   memory_size_mib = 12 * 1024  // gib
-#   disk_size_mib   = 200 * 1024 // gib
-#   addresses       = ["10.255.1.11"]
-# }
+module "kube_1" {
+  count           = 1
+  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
+  name            = "kube-1"
+  datastore_name  = module.hypervisor.datastore_name
+  network_id      = module.hypervisor.network_id
+  base_volume_id  = module.hypervisor.base_volume_id
+  cpu_count       = 4
+  memory_size_mib = 12 * 1024  // gib
+  disk_size_mib   = 200 * 1024 // gib
+  addresses       = ["10.255.1.11"]
+}
