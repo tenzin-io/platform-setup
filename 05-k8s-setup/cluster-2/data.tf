@@ -1,5 +1,5 @@
 data "vault_generic_secret" "cloudflare_tunnel" {
-  path = "secrets/cloudflare/tunnels/cluster-1"
+  path = "secrets/cloudflare/tunnels/cluster-2"
 }
 
 data "vault_generic_secret" "cloudflare_automation" {
