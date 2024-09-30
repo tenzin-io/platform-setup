@@ -2,14 +2,27 @@ k8s_cluster:
   children:
     bootstrap_node:
       hosts:
-        kube-1:
-          control_plane_endpoint_name: cluster-1
-          skip_phase_mark_control_plane: True
+        kube-0.vm.vhost-1:
     control_plane:
       hosts:
+        kube-1.vm.vhost-1:
+        kube-2.vm.vhost-1:
     worker_nodes:
       hosts:
+        kube-3.vm.vhost-1:
+        kube-4.vm.vhost-1:
+        kube-5.vm.vhost-1:
   vars:
+    control_plane_endpoint_name: cluster.vm.vhost-1
+
+    # keepalived
+    enable_keepalived: False
+    keepalived_router_id: 250
+    keepalived_interface: enp1s0
+    keepalived_virtual_address: 10.255.1.250
+    keepalived_cluster_password: clusterpass
+
+    # ansible
     ansible_ssh_user: ansible
     ansible_ssh_private_key_file: ansible.key
     ansible_become: True
