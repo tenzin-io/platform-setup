@@ -1,0 +1,8 @@
+---
+- name: Setup Kubernetes cluster nodes
+  hosts: control_plane:worker_nodes 
+
+  pre_tasks:
+  roles:
+    - name: setup-kubernetes/cluster-node
+...
