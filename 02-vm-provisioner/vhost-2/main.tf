@@ -26,7 +26,7 @@ module "hypervisor" {
 }
 
 // virtual machines on vhost_2
-module "kube_1" {
+module "kube_node" {
   count           = 1
   source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
   name            = "kube-0"
