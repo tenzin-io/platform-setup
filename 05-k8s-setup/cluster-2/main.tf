@@ -90,7 +90,7 @@ module "jupyterhub" {
   github_oauth_client_secret   = data.vault_generic_secret.jupyterhub.data["github_oauth_client_secret"]
   allowed_github_organizations = ["tenzin-io"]
   jupyter_image_name           = "quay.io/jupyter/pytorch-notebook"
-  jupyter_image_tag            = "pytorch-2.4.1"
+  jupyter_image_tag            = "cuda11-pytorch-2.4.1"
   jupyterhub_fqdn              = "jupyterhub.tenzin.io"
 }
 
