@@ -5,17 +5,9 @@
 #
 - name: Extract containerd tarball x86_64
   unarchive:
-    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz"
+    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-{{ containerd_os }}-{{ containerd_arch }}.tar.gz"
     dest: /usr/local/
     remote_src: yes
-  when: ansible_machine == "x86_64"
-
-- name: Extract containerd tarball aarch64
-  unarchive:
-    src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-arm64.tar.gz"
-    dest: /usr/local/
-    remote_src: yes
-  when: ansible_machine == "aarch64"
 
 - name: Create containerd config folder
   file:
@@ -39,19 +31,11 @@
     enabled: yes
     daemon_reload: yes
 
-- name: Extract crictl tarball amd64
+- name: Extract crictl tarball
   unarchive:
-    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz"
+    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-{{ crictl_os }}-{{ crictl_arch }}.tar.gz"
     dest: /usr/local/bin
     remote_src: yes
-  when: ansible_machine == "x86_64"
-
-- name: Extract crictl tarball arm64
-  unarchive:
-    src: "https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-arm64.tar.gz"
-    dest: /usr/local/bin
-    remote_src: yes
-  when: ansible_machine == "aarch64"
 
 - name: crictl.yaml
   copy:

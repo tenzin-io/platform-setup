@@ -7,16 +7,8 @@
     state: directory
     path: /opt/cni/bin
 
-- name: Unarchive cni-plugins tarball x86_64
+- name: Unarchive cni-plugins tarball
   unarchive:
-    src: "https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugins_version }}/cni-plugins-linux-amd64-v{{ cni_plugins_version }}.tgz"
+    src: "https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugins_version }}/cni-plugins-{{ cni_plugins_os }}-{{ cni_plugins_arch }}-v{{ cni_plugins_version }}.tgz"
     dest: /opt/cni/bin
     remote_src: yes 
-  when: ansible_machine == "x86_64"
-
-- name: Unarchive cni-plugins tarball aarch64
-  unarchive:
-    src: "https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugins_version }}/cni-plugins-linux-arm64-v{{ cni_plugins_version }}.tgz"
-    dest: /opt/cni/bin
-    remote_src: yes
-  when: ansible_machine == "aarch64"

@@ -20,45 +20,21 @@
 
 - name: Install kubeadm
   get_url:
-    url: "{{ lookup('eks_release', 'kubeadm', 'arm64', 'linux') }}"
+    url: "{{ lookup('eks_release', 'kubeadm', eks_release_arch, eks_release_os) }}"
     dest: /usr/bin/kubeadm
     mode: 0755
-  when: ansible_machine == "aarch64"
 
 - name: Install kubelet
   get_url:
-    url: "{{ lookup('eks_release', 'kubelet', 'arm64', 'linux') }}"
+    url: "{{ lookup('eks_release', 'kubelet', eks_release_arch, eks_release_os) }}"
     dest: /usr/bin/kubelet
     mode: 0755
-  when: ansible_machine == "aarch64"
 
 - name: Install kubectl
   get_url:
-    url: "{{ lookup('eks_release', 'kubectl', 'arm64', 'linux') }}"
+    url: "{{ lookup('eks_release', 'kubectl', eks_release_arch, eks_release_os) }}"
     dest: /usr/bin/kubectl
     mode: 0755
-  when: ansible_machine == "aarch64"
-
-- name: Install kubeadm
-  get_url:
-    url: "{{ lookup('eks_release', 'kubeadm', 'amd64', 'linux') }}"
-    dest: /usr/bin/kubeadm
-    mode: 0755
-  when: ansible_machine == "x86_64"
-
-- name: Install kubelet
-  get_url:
-    url: "{{ lookup('eks_release', 'kubelet', 'amd64', 'linux') }}"
-    dest: /usr/bin/kubelet
-    mode: 0755
-  when: ansible_machine == "x86_64"
-
-- name: Install kubectl
-  get_url:
-    url: "{{ lookup('eks_release', 'kubectl', 'amd64', 'linux') }}"
-    dest: /usr/bin/kubectl
-    mode: 0755
-  when: ansible_machine == "x86_64"
 
 - name: Send over kubelet.service
   get_url:

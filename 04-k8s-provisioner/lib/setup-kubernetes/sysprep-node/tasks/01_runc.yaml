@@ -8,17 +8,9 @@
 
 - name: Download runc x86_64
   get_url:
-    url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.amd64
+    url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.{{ runc_arch }}
     checksum: "sha256:https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.sha256sum"
     dest: '{{ runc_download.path }}'
-  when: ansible_machine == "x86_64"
-
-- name: Download runc aarch64
-  get_url:
-    url: https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.arm64
-    checksum: "sha256:https://github.com/opencontainers/runc/releases/download/v{{ runc_version }}/runc.sha256sum"
-    dest: '{{ runc_download.path }}'
-  when: ansible_machine == "aarch64"
 
 - name: Install runc
   copy:
