@@ -3,7 +3,7 @@
 #
 # Install containerd container rumtime
 #
-- name: Extract containerd tarball x86_64
+- name: Extract containerd tarball
   unarchive:
     src: "https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-{{ containerd_os }}-{{ containerd_arch }}.tar.gz"
     dest: /usr/local/
