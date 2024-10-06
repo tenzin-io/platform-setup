@@ -1,13 +1,4 @@
 ---
-- include_tasks: keepalived-cluster.yaml
-  when: enable_keepalived == True
-
-- name: Update /etc/hosts
-  lineinfile:
-    path: /etc/hosts
-    regexp: '.* {{ control_plane_endpoint_name }}$'
-    line: "{{ control_plane_endpoint_address }}  {{ control_plane_endpoint_name }}"
-
 - name: Create /etc/kubernetes folder
   file:
     path: /etc/kubernetes

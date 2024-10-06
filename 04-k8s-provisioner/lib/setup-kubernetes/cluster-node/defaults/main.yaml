@@ -1,5 +1,6 @@
 control_plane_endpoint_name: cluster-endpoint
 control_plane_endpoint_address: 127.0.0.1
+control_plane_endpoint_alternative_names: []
 pod_network_cidr: 10.253.0.0/16
 service_network_cidr: 10.254.0.0/16
 

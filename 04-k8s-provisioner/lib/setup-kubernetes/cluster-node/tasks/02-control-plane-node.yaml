@@ -13,6 +13,3 @@
   command: "{{ join_command.stdout }}"
   args:
     creates: /etc/kubernetes/kubelet.conf
-
-- include_tasks: keepalived-cluster.yaml
-  when: enable_keepalived == True
