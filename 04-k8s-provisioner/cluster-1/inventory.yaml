@@ -5,11 +5,17 @@ k8s_cluster:
         kube-0.vm.vhost-1:
     control_plane:
       hosts:
+        # kube-1.vm.vhost-1:
     worker_nodes:
       hosts:
+        # kube-2.vm.vhost-1:
+        # kube-3.vm.vhost-1:
   vars:
     # cluster api-server
-    control_plane_endpoint_name: cluster.vm.vhost-1
+    control_plane_endpoint_name: cluster-1.vm.vhost-1
+    control_plane_endpoint_alternative_names:
+      - cluster-1
+      - cluster-1.tenzin.cloud
     control_plane_endpoint_address: 10.255.1.150
 
     # keepalived
@@ -20,6 +26,6 @@ k8s_cluster:
     keepalived_cluster_password: clusterpass
 
     # ansible
-    ansible_ssh_user: ansible
-    ansible_ssh_private_key_file: ansible.key
+    ansible_ssh_user: tenzin-bot
+    ansible_ssh_private_key_file: tenzin-bot.key
     ansible_become: True
