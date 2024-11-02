@@ -35,7 +35,7 @@ jobs:
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            secrets/data/ansible-playbooks/ansible-ssh-user/ansible SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+            secrets/data/ansible-playbooks/ansible-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
             secrets/data/ansible-playbooks/ansible-vault vault_password | ANSIBLE_VAULT_PASSWORD
 
       - name: Tailscale connection
@@ -52,11 +52,11 @@ jobs:
           test -e ~/.ssh || mkdir ~/.ssh
 
           # setup secrets
-          cat <<EOF > ansible.key
+          cat <<EOF > tenzin-bot.key
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
-          chmod 0600 ansible.key
-          cp ansible.key ~/.ssh/id_ed25519
+          chmod 0600 tenzin-bot.key
+          cp tenzin-bot.key ~/.ssh/id_ed25519
 
           cat <<EOF > vault_password.txt
           ${{ steps.vault-secrets.outputs.ANSIBLE_VAULT_PASSWORD }}
@@ -82,7 +82,7 @@ jobs:
       - name: Clean up secrets
         run: |
           test -e ~/.ssh/id_ed25519 && rm -f ~/.ssh/id_ed25519
-          test -e ansible.key && rm -f ansible.key
+          test -e tenzin-bot.key && rm -f tenzin-bot.key
           test -e vault_password.txt && rm -f vault_password.txt
 
 ...

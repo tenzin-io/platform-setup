@@ -41,7 +41,7 @@ jobs:
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            secrets/data/ansible-playbooks/ansible-ssh-user/ansible SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+            secrets/data/ansible-playbooks/ansible-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
@@ -56,12 +56,12 @@ jobs:
           # make ~/.ssh folder
           test -e ~/.ssh || mkdir ~/.ssh
 
-          # setup ansible.key
-          cat <<EOF > ansible.key
+          # setup tenzin-bot.key
+          cat <<EOF > tenzin-bot.key
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
-          chmod 0600 ansible.key
-          cp ansible.key ~/.ssh/ansible.key
+          chmod 0600 tenzin-bot.key
+          cp tenzin-bot.key ~/.ssh/tenzin-bot.key
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
@@ -70,11 +70,11 @@ jobs:
           Host bastion
             User root
             Hostname tenzins-pi
-            IdentityFile ~/.ssh/ansible.key
+            IdentityFile ~/.ssh/tenzin-bot.key
           
           Host vhost-1.lan
             ProxyJump bastion
-            IdentityFile ~/.ssh/ansible.key
+            IdentityFile ~/.ssh/tenzin-bot.key
           EOF
 
       - name: Get packages
@@ -96,6 +96,6 @@ jobs:
 
       - name: Clean up secrets
         run: |
-          test -e ansible.key && rm -f ansible.key
+          test -e tenzin-bot.key && rm -f tenzin-bot.key
 
 ...
