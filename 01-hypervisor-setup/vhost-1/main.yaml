@@ -15,21 +15,21 @@
         size: 95%PVS
         resizefs: True
 
-    - name: Update /etc/default/grub
-      lineinfile:
-        path: /etc/default/grub
-        regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt"'
-      notify:
-        - update grub
-        - reboot system
-      when: has_nvidia_gpu == False
+#    - name: Update /etc/default/grub
+#      lineinfile:
+#        path: /etc/default/grub
+#        regexp: '^GRUB_CMDLINE_LINUX='
+#        line: 'GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt mitigations=off"'
+#      notify:
+#        - update grub
+#        - reboot system
+#      when: has_nvidia_gpu == False
 
     - name: Update /etc/default/grub for GPU pass through
       lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: "GRUB_CMDLINE_LINUX=\"net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids={{ gpu_pci_ids | join(',') }} vfio-pci.disable_vga=1\""
+        line: "GRUB_CMDLINE_LINUX=\"net.ifnames=0 biosdevname=0 amd_iommu=on amd_iommu=pt mitigations=off video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids={{ gpu_pci_ids | join(',') }} vfio-pci.disable_vga=1\""
       notify:
         - update grub
         - reboot system
