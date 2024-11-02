@@ -1,6 +1,9 @@
 - name: Setup hypervisors
   hosts: hypervisors
 
+  ## TODO
+  ## Add tenzin-bot user to libvirt groups
+
   tasks:
     - name: Update OS physical volume
       lvg:
