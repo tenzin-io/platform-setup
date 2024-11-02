@@ -14,7 +14,7 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://root@vhost-1.lan/system?keyfile=ansible.key&sshauth=privkey&no_verify=1"
+  uri = "qemu+ssh://tenzin-bot@vhost-1.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
 }
 
 // host
@@ -23,6 +23,14 @@ module "hypervisor" {
   hypervisor_ip   = "192.168.200.251"
   vm_network_cidr = "10.255.1.0/24"
   vm_domain_name  = "vm.vhost-1"
+
+  dns_host_records = [{
+    hostname    = "cluster",
+    host_number = 150
+    }, {
+    hostname    = "metallb",
+    host_number = 200
+  }]
 }
 
 // virtual machines on vhost_1
