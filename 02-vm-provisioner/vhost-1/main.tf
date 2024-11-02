@@ -35,14 +35,27 @@ module "hypervisor" {
 
 // virtual machines on vhost_1
 module "kube_nodes" {
-  count           = 1
+  count           = 4
   source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
   name            = "kube-${count.index}"
   datastore_name  = module.hypervisor.datastore_name
   network_id      = module.hypervisor.network_id
   base_volume_id  = module.hypervisor.base_volume_id
-  cpu_count       = 7
-  memory_size_mib = 110 * 1024  // gib
-  disk_size_mib   = 1500 * 1024 // gib
-  addresses       = ["10.255.1.1${count.index}"]
+  cpu_count       = 4
+  memory_size_mib = 16 * 1024  // gib
+  disk_size_mib   = 128 * 1024 // gib
+  addresses       = [cidrhost(module.hypervisor.vm_network_cidr, 10 + count.index)]
+}
+
+module "storage_node" {
+  count           = 1
+  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
+  name            = "stor-${count.index}"
+  datastore_name  = module.hypervisor.datastore_name
+  network_id      = module.hypervisor.network_id
+  base_volume_id  = module.hypervisor.base_volume_id
+  cpu_count       = 4
+  memory_size_mib = 16 * 1024  // gib
+  disk_size_mib   = 500 * 1024 // gib
+  addresses       = [cidrhost(module.hypervisor.vm_network_cidr, 90 + count.index)]
 }
