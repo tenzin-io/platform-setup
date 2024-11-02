@@ -25,10 +25,10 @@ module "hypervisor" {
   vm_domain_name  = "vm.vhost-1"
 
   dns_host_records = [{
-    hostname    = "cluster",
+    hostname    = "cluster-1",
     host_number = 150
     }, {
-    hostname    = "metallb",
+    hostname    = "metallb-1",
     host_number = 200
   }]
 }
