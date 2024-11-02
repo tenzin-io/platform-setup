@@ -2,40 +2,38 @@
 - name: Setup the netinst host
   hosts: netinst
 
+  vars:
+    outbound_interface: eth0
+    hypervisors_interface: eth1
+
   vars_files:
     - secrets.yaml
     - hypervisors.yaml
 
   pre_tasks:
-    - name: Check for eth0 interface
+    - name: Check for outbound interface
       stat:
-        path: /sys/class/net/eth0
-      register: check_eth0
+        path: /sys/class/net/{{ outbound_interface }}
+      register: check_outbound_interface
 
-    - name: Check for eth1 interface
+    - name: Check for hypervisors interface
       stat:
-        path: /sys/class/net/eth1
-      register: check_eth1
+        path: /sys/class/net/{{ hypervisors_interface }}
+      register: check_hypervisors_interface
 
-    - name: Assert that both eth0 and eth1 exist
+    - name: Assert that both outbound interface and hypervisors interface exist
       assert:
         that:
-          - check_eth0.stat.exists
-          - check_eth1.stat.exists
-        fail_msg: "Required network interfaces eth0 or eth1 do not exist."
-        success_msg: "Both eth0 and eth1 interfaces exist."
+          - check_outbound_interface.stat.exists
+          - check_hypervisors_interface.stat.exists
+        fail_msg: "Required network interfaces {{ outbound_interface }} or {{ hypervisors_interface}} do not exist."
+        success_msg: "Both {{ outbound_interface }} and {{ hypervisors_interface }} interfaces exist."
 
-    - name: Setup eth1
+    - name: Setup hypervisors interface
       copy:
-        dest: /etc/network/interfaces.d/eth1
-        content: |-
-          allow-hotplug eth1
-          iface eth1 inet static
-            address 10.255.255.1
-            netmask 255.255.255.0
-            network 10.255.255.0
-            broadcast 10.255.255.255
-      notify: reload networking
+        dest: /etc/network/interfaces.d/{{ hypervisors_interface }}
+        content: '{{ hypervisor_network_gateway_config }}'
+        notify: reload networking
 
   tasks:
     - name: Install packages
@@ -45,7 +43,6 @@
       loop:
         - dnsmasq
         - nginx
-        - tree
         - iptables
         - iptables-persistent
 
@@ -56,25 +53,25 @@
         sysctl_set: true
         reload: true
 
-    - name: Set up NAT with MASQUERADE on eth0
+    - name: Set up NAT with MASQUERADE on outbound interface
       iptables:
         table: nat
         chain: POSTROUTING
-        out_interface: eth0
+        out_interface: "{{ outbound_interface }}"
         jump: MASQUERADE
 
-    - name: Allow forwarding from eth1 to eth0
+    - name: Allow forwarding from hypervisors interface to outbound interface
       iptables:
         chain: FORWARD
-        in_interface: eth1
-        out_interface: eth0
+        in_interface: "{{ hypervisors_interface }}"
+        out_interface: "{{ outbound_interface }}"
         jump: ACCEPT
 
-    - name: Allow established and related connections from eth0 to eth1
+    - name: Allow established and related connections from outbound interface to hypervisors_interface
       iptables:
         chain: FORWARD
-        in_interface: eth0
-        out_interface: eth1
+        in_interface: "{{ outbound_interface }}"
+        out_interface: "{{ hypervisors_interface }}"
         match: state
         ctstate: RELATED,ESTABLISHED
         jump: ACCEPT
@@ -142,27 +139,27 @@
       file:
         path: /var/www/ipxehttp/{{ item.hostname }}
         state: directory
-      loop: '{{ baremetal_hosts }}'
+      loop: '{{ hypervisors }}'
 
     - name: Send over user-data
       template:
         src: user-data.j2
         dest: /var/www/ipxehttp/{{ item.hostname }}/user-data
-      loop: '{{ baremetal_hosts }}'
+      loop: '{{ hypervisors }}'
 
     - name: Send over meta-data
       copy:
         dest: /var/www/ipxehttp/{{ item.hostname }}/meta-data
         content: |-
           # placeholder meta-data file for {{ item.hostname }}
-      loop: '{{ baremetal_hosts }}'
+      loop: '{{ hypervisors }}'
 
     - name: Create a symlink to hostname folder
       file:
         src: /var/www/ipxehttp/{{ item.hostname }}
         dest: /var/www/ipxehttp/{{ item.macaddr }}
         state: link
-      loop: '{{ baremetal_hosts }}'
+      loop: '{{ hypervisors }}'
 
     - name: Enable and start services
       service:

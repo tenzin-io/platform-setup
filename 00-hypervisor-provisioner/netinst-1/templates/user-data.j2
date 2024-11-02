@@ -46,5 +46,5 @@ autoinstall:
 
   late-commands:
     - echo '{{ console_username }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/{{ console_username }} # allow sudo without password
-    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0"/' /etc/default/grub
+    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 mitigations=off"/' /etc/default/grub
     - curtin in-target --target /target -- update-grub2
