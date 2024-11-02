@@ -74,6 +74,7 @@ jobs:
           
           Host vhost-1.lan
             ProxyJump bastion
+            User tenzin-bot
             IdentityFile ~/.ssh/tenzin-bot.key
           EOF
 
