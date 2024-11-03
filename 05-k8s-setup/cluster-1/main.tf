@@ -34,6 +34,7 @@ module "calico" {
 
 module "local_path_provisioner" {
   source     = "git::https://github.com/tenzin-io/terraform-modules.git//kubernetes/local-path-provisioner?ref=main"
+  local_path = "/data"
   depends_on = [module.calico]
 }
 
