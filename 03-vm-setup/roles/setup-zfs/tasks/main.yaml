@@ -1,0 +1,36 @@
+---
+- name: Update cache and install packages
+  apt:
+    package: '{{ item }}' 
+    update_cache: true
+  loop:
+    - zfsutils-linux
+    - nfs-common
+    - nfs-kernel-server
+
+- name: Setup zpool
+  command: 'zpool create {{ zpool_name }} {{ zpool_disks }}'
+  when:
+    - zpool_disks is defined
+    - zpool_name is defined
+  args:
+    creates: '/{{ zpool_name }}'
+
+- name: Setup parent zfs options
+  command: 'zfs set {{ item }} {{ zpool_name }}'
+  when:
+    - zpool_name is defined
+  loop:
+    - compression=zstd
+    - atime=off
+
+- name: Setup filesystems
+  shell: |-
+    zfs get -Hpo property,value name {{ zpool_name }}/{{ filesystem.name }} || zfs create {{ zpool_name }}/{{ filesystem.name }}
+    zfs set sharenfs=rw={{ filesystem.clients | join(':') }},no_root_squash,sec=sys,no_subtree_check {{ zpool_name }}/{{ filesystem.name }}
+  loop: '{{ filesystems }}'
+  loop_control:
+    loop_var: filesystem
+  when:
+    - zpool_name is defined
+    - filesystems is defined
