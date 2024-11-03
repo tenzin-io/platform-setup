@@ -1,4 +1,4 @@
-eks_release_url: https://distro.eks.amazonaws.com/kubernetes-1-29/kubernetes-1-29-eks-5.yaml
+eks_release_url: https://distro.eks.amazonaws.com/kubernetes-1-31/kubernetes-1-31-eks-6.yaml
 eks_release_arch: amd64 # amd64 || arm64
 eks_release_os: linux
 
