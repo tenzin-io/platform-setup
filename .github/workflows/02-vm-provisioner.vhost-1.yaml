@@ -68,13 +68,12 @@ jobs:
           StrictHostKeyChecking no
 
           Host bastion
-            User root
             Hostname tenzins-pi
+            User tenzin-bot
             IdentityFile ~/.ssh/tenzin-bot.key
           
           Host vhost-1.lan
             ProxyJump bastion
-            User tenzin-bot
             IdentityFile ~/.ssh/tenzin-bot.key
           EOF
 
