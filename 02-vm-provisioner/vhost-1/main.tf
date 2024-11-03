@@ -56,6 +56,11 @@ module "storage_node" {
   base_volume_id  = module.hypervisor.base_volume_id
   cpu_count       = 4
   memory_size_mib = 16 * 1024  // gib
-  disk_size_mib   = 500 * 1024 // gib
+  disk_size_mib   = 128 * 1024 // gib
   addresses       = [cidrhost(module.hypervisor.vm_network_cidr, 90 + count.index)]
+  data_disks = {
+    "disk-1" = {
+      disk_size_mib = 250 * 1024 // gib
+    }
+  }
 }
