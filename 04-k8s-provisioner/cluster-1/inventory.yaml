@@ -3,6 +3,7 @@ k8s_cluster:
     bootstrap_node:
       hosts:
         kube-0.vm.vhost-1:
+          skip_phase_mark_control_plane: True
     control_plane:
       hosts:
         # kube-1.vm.vhost-1:

@@ -1,0 +1,11 @@
+---
+- name: Prepare Kubernetes cluster nodes with datastores
+  hosts: k8s_cluster
+
+  roles:
+    - name: setup-datastore
+      vars:
+        disk_device: "/dev/vdb"  # replace with the actual disk device
+        mount_point: "/data"
+
+...
