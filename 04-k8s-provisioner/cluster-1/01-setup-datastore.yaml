@@ -5,7 +5,7 @@
   roles:
     - name: setup-datastore
       vars:
-        disk_device: "/dev/vdb"  # replace with the actual disk device
-        mount_point: "/data"
+        disk_device: /dev/vdb
+        mount_point: /data
 
 ...
