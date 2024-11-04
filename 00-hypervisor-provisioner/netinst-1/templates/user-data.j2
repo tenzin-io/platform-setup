@@ -21,17 +21,13 @@ autoinstall:
 
   ssh:
     install-server: yes
-    authorized-keys:
-      - {{ automation_ssh_pubkey }}
-
-  identity:
-    hostname: {{ item.hostname }}
-    username: {{ console_username }}
-    password: {{ console_password }}
 
   storage:
     layout:
       name: lvm
+      sizing-policy: all
+      match:
+        path: /dev/nvme*
 
   packages:
     - qemu-kvm
@@ -42,9 +38,20 @@ autoinstall:
     - wpasupplicant
 
   user-data:
-    disable_root: false
+    hostname: {{ item.hostname }}
+    users:
+      - name: {{ console_username }}
+        passwd: {{ console_password }}
+        groups: libvirt, libvirt-qemu, libvirt-dnsmasq
+        shell: /bin/bash
+        lock_passwd: False
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        ssh_authorized_keys:
+          - "{{ automation_ssh_pubkey }}"
 
   late-commands:
-    - echo '{{ console_username }} ALL=(ALL) NOPASSWD:ALL' > /target/etc/sudoers.d/{{ console_username }} # allow sudo without password
     - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 mitigations=off"/' /etc/default/grub
     - curtin in-target --target /target -- update-grub2
+    - curtin in-target --target /target -- mkdir -p /etc/apparmor.d/abstractions/libvirt-qemu.d
+    - echo '/var/lib/libvirt/images/* rwk,' >> /target/etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
+    - echo '/var/lib/libvirt/machines/* rwk,' >> /target/etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
