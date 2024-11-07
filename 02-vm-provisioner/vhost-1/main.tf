@@ -17,55 +17,37 @@ provider "libvirt" {
   uri = "qemu+ssh://tenzin-bot@vhost-1.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
 }
 
-// host
-module "hypervisor" {
-  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/hypervisor?ref=main"
-  hypervisor_ip   = "192.168.200.251"
-  vm_network_cidr = "10.255.1.0/24"
-  vm_domain_name  = "vm.vhost-1"
+resource "libvirt_pool" "datastore" {
+  name = "datastore"
+  type = "dir"
+  path = "/var/lib/libvirt/machines"
+}
 
-  dns_host_records = [{
-    hostname    = "cluster-1",
-    host_number = 150
-    }, {
-    hostname    = "metallb-1",
-    host_number = 200
-  }]
+resource "libvirt_volume" "ubuntu_base_volume" {
+  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  name   = "ubuntu-noble-server-cloudimg-amd64.qcow2"
+  pool   = libvirt_pool.datastore.name
+  format = "qcow2"
 }
 
 // virtual machines on vhost_1
 module "cluster_1" {
-  count           = 1
-  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
-  name            = "kube-${count.index}"
-  datastore_name  = module.hypervisor.datastore_name
-  network_id      = module.hypervisor.network_id
-  base_volume_id  = module.hypervisor.base_volume_id
-  cpu_count       = 6
-  memory_size_mib = 48 * 1024  // gib
-  disk_size_mib   = 128 * 1024 // gib
-  addresses       = [cidrhost(module.hypervisor.vm_network_cidr, 10 + count.index)]
-  data_disks = {
-    "disk-1" = {
-      disk_size_mib = 350 * 1024 // gib
-    }
-  }
-}
+  count          = 1
+  source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
+  cluster_name   = "t1"
+  datastore_name = libvirt_pool.datastore.name
+  base_volume_id = libvirt_volume.ubuntu_base_volume.id
 
-module "storage_node" {
-  count           = 0
-  source          = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/virtual-machine?ref=main"
-  name            = "stor-${count.index}"
-  datastore_name  = module.hypervisor.datastore_name
-  network_id      = module.hypervisor.network_id
-  base_volume_id  = module.hypervisor.base_volume_id
-  cpu_count       = 4
-  memory_size_mib = 16 * 1024  // gib
-  disk_size_mib   = 128 * 1024 // gib
-  addresses       = [cidrhost(module.hypervisor.vm_network_cidr, 90 + count.index)]
-  data_disks = {
-    "disk-1" = {
-      disk_size_mib = 250 * 1024 // gib
+  vpc_network_cidr = "10.255.1.0/24"
+
+  vm_cpu_count       = 6
+  vm_memory_size_mib = 48 * 1024  // gib
+  vm_disk_size_mib   = 128 * 1024 // gib
+  vm_data_disks = {
+    "/dev/vdb" = {
+      disk_size_mib = 350 * 1024 // gib
+      fs_type       = "ext4"
+      mount_path    = "/data"
     }
   }
 }
