@@ -1,6 +1,6 @@
 hypervisors:
-  - hostname: vhost-1
-    macaddr: a8-a1-59-7d-7c-81
+  - hostname: vhost
+    macaddr: 9c-6b-00-68-42-ab
 
 hypervisor_network_gateway_config: |-
   allow-hotplug eth1
