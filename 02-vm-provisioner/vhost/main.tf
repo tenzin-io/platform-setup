@@ -14,18 +14,19 @@ terraform {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://tenzin-bot@vhost-1.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
+  uri = "qemu+ssh://tenzin-bot@vhost.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
 }
 
 resource "libvirt_pool" "datastore" {
   name = "datastore"
   type = "dir"
-  path = "/var/lib/libvirt/machines"
+  path = "/datastore"
 }
 
 resource "libvirt_volume" "ubuntu_base_volume" {
-  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  name   = "ubuntu-noble-server-cloudimg-amd64.qcow2"
+  #source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  source = "noble-server-cloudimg-amd64.qcow2"
+  name   = "noble-server-cloudimg-amd64.qcow2"
   pool   = libvirt_pool.datastore.name
   format = "qcow2"
 }
@@ -40,12 +41,12 @@ module "cluster_1" {
 
   vpc_network_cidr = "10.255.1.0/24"
 
-  vm_cpu_count       = 6
-  vm_memory_size_mib = 48 * 1024  // gib
-  vm_disk_size_mib   = 128 * 1024 // gib
+  vm_cpu_count       = 4
+  vm_memory_size_mib = 16 * 1024 // gib
+  vm_disk_size_mib   = 64 * 1024 // gib
   vm_data_disks = {
     "/dev/vdb" = {
-      disk_size_mib = 350 * 1024 // gib
+      disk_size_mib = 128 * 1024 // gib
       fs_type       = "ext4"
       mount_path    = "/data"
     }
