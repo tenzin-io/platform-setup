@@ -34,6 +34,7 @@ resource "libvirt_volume" "ubuntu_base_volume" {
 // virtual machines on vhost_1
 module "cluster_1" {
   count          = 1
+  vm_node_count  = 1
   source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
   cluster_name   = "t1"
   datastore_name = libvirt_pool.datastore.name
@@ -44,11 +45,4 @@ module "cluster_1" {
   vm_cpu_count       = 4
   vm_memory_size_mib = 16 * 1024 // gib
   vm_disk_size_mib   = 64 * 1024 // gib
-  vm_data_disks = {
-    "/dev/vdb" = {
-      disk_size_mib = 128 * 1024 // gib
-      fs_type       = "ext4"
-      mount_path    = "/data"
-    }
-  }
 }
