@@ -13,6 +13,10 @@ terraform {
   }
 }
 
+provider "vault" {
+  address = "https://vault.tenzin.io"
+}
+
 provider "libvirt" {
   uri = "qemu+ssh://tenzin-bot@vhost.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
 }
@@ -31,17 +35,26 @@ resource "libvirt_volume" "ubuntu_base_volume" {
   format = "qcow2"
 }
 
+data "vault_generic_secret" "dockerhub" {
+  path = "secrets/dockerhub"
+}
+
 // virtual machines on vhost_1
 module "cluster_1" {
   count          = 1
-  vm_node_count  = 1
   source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
   cluster_name   = "t1"
   datastore_name = libvirt_pool.datastore.name
   base_volume_id = libvirt_volume.ubuntu_base_volume.id
 
-  vpc_network_cidr = "10.255.1.0/24"
+  vpc_network_cidr         = "10.255.1.0/24"
+  vpc_domain_name          = "private.lan"
+  alternative_domain_names = ["tenzin.io"]
 
+  docker_hub_user  = data.vault_generic_secret.dockerhub.data["username"]
+  docker_hub_token = data.vault_generic_secret.dockerhub.data["api_token"]
+
+  vm_node_count      = 3
   vm_cpu_count       = 4
   vm_memory_size_mib = 16 * 1024 // gib
   vm_disk_size_mib   = 64 * 1024 // gib
