@@ -27,12 +27,23 @@ resource "libvirt_pool" "datastore" {
   path = "/datastore"
 }
 
+resource "null_resource" "download_file" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      test -e ${path.module}/noble-server-cloudimg-amd64.img || curl -o ${path.module}/noble-server-cloudimg-amd64.img https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
+    EOT
+  }
+  triggers = {
+    file_exists = fileexists("${path.module}/noble-server-cloudimg-amd64.img")
+  }
+}
+
 resource "libvirt_volume" "ubuntu_base_volume" {
-  #source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
-  source = "noble-server-cloudimg-amd64.qcow2"
+  source = "${path.module}/noble-server-cloudimg-amd64.img"
   name   = "noble-server-cloudimg-amd64.qcow2"
   pool   = libvirt_pool.datastore.name
   format = "qcow2"
+  depends_on = [null_resource.download_file]
 }
 
 data "vault_generic_secret" "dockerhub" {
