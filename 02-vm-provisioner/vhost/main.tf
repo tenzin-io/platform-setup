@@ -18,53 +18,54 @@ provider "vault" {
 }
 
 provider "libvirt" {
-  uri = "qemu+ssh://tenzin-bot@vhost.lan/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
-}
-
-resource "libvirt_pool" "datastore" {
-  name = "datastore"
-  type = "dir"
-  target {
-    path = "/data/machines"
-  }
-}
-
-resource "null_resource" "download_file" {
-  provisioner "local-exec" {
-    command = <<-EOT
-      test -e ${path.module}/noble-server-cloudimg-amd64.img || curl -o ${path.module}/noble-server-cloudimg-amd64.img https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img
-    EOT
-  }
-  triggers = {
-    file_exists = fileexists("${path.module}/noble-server-cloudimg-amd64.img")
-  }
-}
-
-resource "libvirt_volume" "ubuntu_base_volume" {
-  source     = "${path.module}/noble-server-cloudimg-amd64.img"
-  name       = "noble-server-cloudimg-amd64.qcow2"
-  pool       = libvirt_pool.datastore.name
-  format     = "qcow2"
-  depends_on = [null_resource.download_file]
+  uri = "qemu+ssh://tenzin-bot@vhost.tail508ed.ts.net/system?keyfile=tenzin-bot.key&sshauth=privkey&no_verify=1"
 }
 
 data "vault_generic_secret" "dockerhub" {
   path = "secrets/dockerhub"
 }
 
+resource "libvirt_pool" "cloud_images" {
+  name = "cloud-images"
+  type = "dir"
+  target {
+    path = "/data/cloud-images"
+  }
+}
+
+resource "libvirt_volume" "ubuntu_cloud_image" {
+  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  name   = "noble-server-cloudimg-amd64.img"
+  pool   = libvirt_pool.cloud_images.name
+  format = "qcow2"
+}
+
 // virtual machines on vhost_1
 module "cluster_1" {
-  count = 1
+  count = 0
   # source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
-  source         = "../terraform-modules/libvirt/cluster"
-  cluster_name   = "t1"
-  datastore_name = libvirt_pool.datastore.name
-  base_volume_id = libvirt_volume.ubuntu_base_volume.id
+  source = "../terraform-modules/libvirt/cluster"
+
+  hypervisor_connection = {
+    host        = "vhost.tail508ed.ts.net"
+    user        = "tenzin-bot"
+    private_key = file("${path.module}/tenzin-bot.key")
+  }
+
+  cluster_name   = "tenzin"
+  cluster_number = 1
 
   vpc_network_cidr         = "10.255.1.0/24"
-  vpc_domain_name          = "private.lan"
-  alternative_domain_names = ["tenzin.io"]
+  vpc_domain_name          = "virtual.lan"
+  alternative_domain_names = ["tenzin.io", "tenzin.cloud"]
 
+  base_volume = {
+    id   = libvirt_volume.ubuntu_cloud_image.id
+    name = libvirt_volume.ubuntu_cloud_image.name
+    pool = libvirt_pool.cloud_images.name
+  }
+
+  # for container image pull
   docker_hub_user  = data.vault_generic_secret.dockerhub.data["username"]
   docker_hub_token = data.vault_generic_secret.dockerhub.data["api_token"]
 
