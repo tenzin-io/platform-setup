@@ -1,11 +1,11 @@
 name: 02-vm-provisioner/vhost-1
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - '02-vm-provisioner/vhost-1/**'
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - '02-vm-provisioner/vhost-1/**'
   workflow_dispatch:
 
 env:
