@@ -50,10 +50,8 @@ autoinstall:
           - "{{ automation_ssh_pubkey }}"
 
   late-commands:
-    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 mitigations=off"/' /etc/default/grub
+    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 mitigations=off apparmor=0"/' /etc/default/grub
+    - curtin in-target --target /target -- systemctl disable apparmor
     - curtin in-target --target /target -- update-grub2
-    - curtin in-target --target /target -- mkdir -m 0755 /datastore
-    - curtin in-target --target /target -- mkdir -p /etc/apparmor.d/abstractions/libvirt-qemu.d
-    - echo '/var/lib/libvirt/images/* rwk,' >> /target/etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
-    - echo '/var/lib/libvirt/machines/* rwk,' >> /target/etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
-    - echo '/datastore/* rwk,' >> /target/etc/apparmor.d/abstractions/libvirt-qemu.d/libvirt-qemu-extras
+    - curtin in-target --target /target -- mkdir -m 0755 -p /data/shared /data/machines
+    - curtin in-target --target /target -- chown -R libvirt-qemu:kvm /data
