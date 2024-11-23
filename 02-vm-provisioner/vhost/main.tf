@@ -2,7 +2,7 @@ terraform {
   required_providers {
     libvirt = {
       source  = "dmacvicar/libvirt"
-      version = "0.8.0"
+      version = "0.8.1"
     }
   }
   backend "s3" {
@@ -24,7 +24,9 @@ provider "libvirt" {
 resource "libvirt_pool" "datastore" {
   name = "datastore"
   type = "dir"
-  path = "/datastore"
+  target {
+    path = "/data/machines"
+  }
 }
 
 resource "null_resource" "download_file" {
@@ -39,10 +41,10 @@ resource "null_resource" "download_file" {
 }
 
 resource "libvirt_volume" "ubuntu_base_volume" {
-  source = "${path.module}/noble-server-cloudimg-amd64.img"
-  name   = "noble-server-cloudimg-amd64.qcow2"
-  pool   = libvirt_pool.datastore.name
-  format = "qcow2"
+  source     = "${path.module}/noble-server-cloudimg-amd64.img"
+  name       = "noble-server-cloudimg-amd64.qcow2"
+  pool       = libvirt_pool.datastore.name
+  format     = "qcow2"
   depends_on = [null_resource.download_file]
 }
 
@@ -52,8 +54,9 @@ data "vault_generic_secret" "dockerhub" {
 
 // virtual machines on vhost_1
 module "cluster_1" {
-  count          = 1
-  source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
+  count = 1
+  # source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
+  source         = "../terraform-modules/libvirt/cluster"
   cluster_name   = "t1"
   datastore_name = libvirt_pool.datastore.name
   base_volume_id = libvirt_volume.ubuntu_base_volume.id
