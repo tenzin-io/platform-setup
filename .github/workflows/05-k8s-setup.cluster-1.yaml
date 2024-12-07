@@ -49,6 +49,12 @@ jobs:
           oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:ci
+      
+      - name: Setup kubernetes-admin.conf
+        run: |-
+          cat<<'eof' > kubernetes-admin.conf
+          ${{ secrets.KUBECONFIG }}
+          eof
 
       - name: Run Terraform Init
         run: terraform init
