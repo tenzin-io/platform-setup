@@ -64,6 +64,6 @@ jobs:
       - name: Terraform apply
         run: terraform apply -auto-approve
         env:
-          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net
+          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net:3128
 
 ...
