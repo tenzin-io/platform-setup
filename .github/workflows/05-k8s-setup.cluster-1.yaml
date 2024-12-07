@@ -1,0 +1,69 @@
+name: 05-k8s-setup/cluster-1
+
+on:
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - '02-vm-provisioner/vhost-1/**'
+  workflow_dispatch:
+
+env:
+  WORKFLOW_DIR: 05-k8s-setup/cluster-1
+
+jobs:
+  terraform:
+    runs-on: [ubuntu-latest]
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.WORKFLOW_DIR }}
+
+    steps:
+      - uses: actions/checkout@v3
+     
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.platform-setup
+          aws-region: us-east-1
+
+      - name: Get Vault token
+        id: vault-secrets
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://vault.tenzin.io
+          role: tenzin-io.platform-setup
+          method: jwt
+          exportToken: true
+          secrets: |
+            secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
+            secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
+            secrets/data/ansible-playbooks/ansible-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+
+      - name: Tailscale connection
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+
+      - name: Run Terraform Init
+        run: terraform init
+        
+      - name: Run Terraform Format
+        run: terraform fmt -check
+        
+      - name: Run Terraform Validate
+        run: terraform validate
+        env:
+          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve
+        env:
+          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net
+
+...
