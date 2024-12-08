@@ -57,7 +57,7 @@ jobs:
       - name: Setup kubernetes-admin.conf
         run: |-
           touch kubernetes-admin.conf
-          chmod 0600 kubernetes-admin.cof
+          chmod 0600 kubernetes-admin.conf
           cat<<'eof' > kubernetes-admin.conf
           ${{ steps.vault-secrets.outputs.KUBECONFIG }}
           eof
