@@ -14,7 +14,7 @@ terraform {
 }
 
 locals {
-  hypervisor_hostname     = "vhost.lan"
+  hypervisor_hostname     = "vhost.tail508ed.ts.net"
   hypervisor_ssh_user     = "tenzin-bot"
   hypervisor_ssh_key_name = "tenzin-bot.key"
 }
