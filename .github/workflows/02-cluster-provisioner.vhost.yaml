@@ -66,6 +66,9 @@ jobs:
           chmod 0600 tenzin-bot.key
           cp tenzin-bot.key ~/.ssh/tenzin-bot.key
 
+          # fix dns resolution
+          echo 127.0.0.1  vhost-1.lan >> /etc/hosts
+
           # setup ssh config
           cat <<EOF > ~/.ssh/config
           StrictHostKeyChecking no
