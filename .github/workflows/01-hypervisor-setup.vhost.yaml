@@ -22,13 +22,19 @@ jobs:
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "~1.9"
+     
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.platform-setup
+          aws-region: us-east-1
 
       - name: Get Vault token
         id: vault-secrets
         uses: hashicorp/vault-action@v2
         with:
           url: https://vault.tenzin.io
-          role: tenzin-io.ansible-playbooks
+          role: tenzin-io.platform-setup
           method: jwt
           exportToken: true
           secrets: |-
