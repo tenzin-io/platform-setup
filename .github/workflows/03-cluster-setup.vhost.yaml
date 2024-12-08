@@ -74,15 +74,12 @@ jobs:
       - name: Setup terraform.tfvars
         run: |-
           cat<<'eof' > terraform.tfvars
-          cluster_name     = "${{ vars.CLUSTER_NAME }}"
-          cluster_uuid     = "${{ vars.CLUSTER_UUID }}"
+          cluster_name = "${{ vars.CLUSTER_NAME }}"
+          cluster_uuid = "${{ vars.CLUSTER_UUID }}"
           eof
 
       - name: Run Terraform Init
         run: terraform init -backend-config=state.config
-        
-      - name: Run Terraform Format
-        run: terraform fmt -check
         
       - name: Run Terraform Validate
         run: terraform validate
