@@ -8,6 +8,7 @@ on:
 
 env:
   WORKFLOW_DIR: 02-cluster-provisioner/vhost
+  VAULT_ADDRESS: https://vault.tenzin.io
 
 jobs:
   terraform:
@@ -37,7 +38,7 @@ jobs:
         id: vault-secrets
         uses: hashicorp/vault-action@v2
         with:
-          url: https://vault.tenzin.io
+          url: ${{ env.VAULT_ADDRESS }}
           role: tenzin-io.platform-setup
           method: jwt
           exportToken: true
@@ -45,6 +46,8 @@ jobs:
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
             secrets/data/platform-setup/automation-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+            secrets/data/vault-users/kubeconfig-publisher username | VAULT_USERNAME ;
+            secrets/data/vault-users/kubeconfig-publisher password | VAULT_PASSWORD ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
@@ -88,9 +91,9 @@ jobs:
           vpc_network_cidr = "${{ vars.VPC_NETWORK_CIDR }}"
 
           # for kubeconfig publishing
-          vault_address  = "${{ vars.VAULT_ADDRESS }}"
-          vault_username = "${{ vars.VAULT_USERNAME }}"
-          vault_password = "${{ secrets.VAULT_PASSWORD }}"
+          vault_address  = "${{ env.VAULT_ADDRESS }}"
+          vault_username = "${{ steps.vault-secrets.outputs.VAULT_USERNAME }}"
+          vault_password = "${{ steps.vault-secrets.outputs.VAULT_PASSWORD }}"
           eof
 
       - name: Run Terraform Init
