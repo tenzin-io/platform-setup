@@ -1,15 +1,13 @@
-name: 02-vm-provisioner/vhost-1
+name: 02-cluster-provisioner/vhost
 
 on:
-#  push:
-#    branches:
-#      - main
-#    paths:
-#      - '02-vm-provisioner/vhost-1/**'
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
 
 env:
-  WORKFLOW_DIR: 02-vm-provisioner/vhost-1
+  WORKFLOW_DIR: 02-cluster-provisioner/vhost
 
 jobs:
   terraform:
@@ -27,7 +25,7 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.ansible-playbooks
+          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.platform-setup
           aws-region: us-east-1
 
       - name: Get Vault token
@@ -35,13 +33,13 @@ jobs:
         uses: hashicorp/vault-action@v2
         with:
           url: https://vault.tenzin.io
-          role: tenzin-io.ansible-playbooks
+          role: tenzin-io.platform-setup
           method: jwt
           exportToken: true
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            secrets/data/ansible-playbooks/ansible-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+            secrets/data/platform-setup/automation-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
@@ -77,13 +75,30 @@ jobs:
             IdentityFile ~/.ssh/tenzin-bot.key
           EOF
 
-      - name: Get packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y mkisofs
+      - name: Setup state.config
+        run: |-
+          cat<<'eof' > state.config
+          key            = "terraform/02-cluster-provisioner/${{ env.CLUSTER_NAME }}-${{ env.CLUSTER_UUID }}.tfstate"
+          bucket         = "tenzin-io"
+          dynamodb_table = "tenzin-io"
+          region         = "us-east-1"
+          eof
+
+      - name: Setup terraform.tfvars
+        run: |-
+          cat<<'eof' > terraform.tfvars
+          cluster_name     = "${{ env.CLUSTER_NAME }}"
+          cluster_uuid     = "${{ env.CLUSTER_UUID }}"
+          vpc_network_cidr = "${{ env.VPC_NETWORK_CIDR }}"
+
+          # for kubeconfig publishing
+          vault_address  = "{{ env.VAULT_ADDRESS }}"
+          vault_username = "${{ env.VAULT_USERNAME }}"
+          vault_password = "${{ secrets.VAULT_PASSWORD }}"
+          eof
 
       - name: Run Terraform Init
-        run: terraform init
+        run: terraform init -backend-config=state.config
         
       - name: Run Terraform Format
         run: terraform fmt -check
@@ -93,9 +108,4 @@ jobs:
 
       - name: Terraform apply
         run: terraform apply -auto-approve
-
-      - name: Clean up secrets
-        run: |
-          test -e tenzin-bot.key && rm -f tenzin-bot.key
-
 ...
