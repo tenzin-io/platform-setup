@@ -36,9 +36,10 @@ data "vault_generic_secret" "kubeconfig" {
   path = "kubernetes-secrets/kubeconfig/${var.cluster_name}-${var.cluster_uuid}"
 }
 
-resource "local_file" "kubeconfig" {
-  content  = data.vault_generic_secret.kubeconfig.data["kubeconfig"]
-  filename = "kubernetes-admin.conf"
+resource "local_sensitive_file" "kubeconfig" {
+  content         = data.vault_generic_secret.kubeconfig.data["kubeconfig"]
+  filename        = "kubernetes-admin.conf"
+  file_permission = "0600"
 }
 
 

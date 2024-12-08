@@ -8,10 +8,10 @@ provider "vault" {
 
 provider "helm" {
   kubernetes {
-    config_path = local_file.kubeconfig.filename
+    config_path = local_sensitive_file.kubeconfig.filename
   }
 }
 
 provider "kubernetes" {
-  config_path = local_file.kubeconfig.filename
+  config_path = local_sensitive_file.kubeconfig.filename
 }
