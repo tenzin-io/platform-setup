@@ -84,11 +84,11 @@ jobs:
       - name: Run Terraform Validate
         run: terraform validate
         env:
-          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net
+          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net:3128
 
       - name: Terraform apply
         run: terraform apply -auto-approve
         env:
-          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net
+          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net:3128
 
 ...
