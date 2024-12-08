@@ -83,7 +83,7 @@ jobs:
       - name: Setup state.config
         run: |-
           cat<<'eof' > state.config
-          key            = "terraform/02-cluster-provisioner/${{ env.CLUSTER_NAME }}-${{ env.CLUSTER_UUID }}.tfstate"
+          key            = "terraform/02-cluster-provisioner/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}.tfstate"
           bucket         = "tenzin-io"
           dynamodb_table = "tenzin-io"
           region         = "us-east-1"
@@ -92,13 +92,13 @@ jobs:
       - name: Setup terraform.tfvars
         run: |-
           cat<<'eof' > terraform.tfvars
-          cluster_name     = "${{ env.CLUSTER_NAME }}"
-          cluster_uuid     = "${{ env.CLUSTER_UUID }}"
-          vpc_network_cidr = "${{ env.VPC_NETWORK_CIDR }}"
+          cluster_name     = "${{ vars.CLUSTER_NAME }}"
+          cluster_uuid     = "${{ vars.CLUSTER_UUID }}"
+          vpc_network_cidr = "${{ vars.VPC_NETWORK_CIDR }}"
 
           # for kubeconfig publishing
-          vault_address  = "${{ env.VAULT_ADDRESS }}"
-          vault_username = "${{ env.VAULT_USERNAME }}"
+          vault_address  = "${{ vars.VAULT_ADDRESS }}"
+          vault_username = "${{ vars.VAULT_USERNAME }}"
           vault_password = "${{ secrets.VAULT_PASSWORD }}"
           eof
 
