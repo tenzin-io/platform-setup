@@ -67,7 +67,7 @@ jobs:
           cp tenzin-bot.key ~/.ssh/tenzin-bot.key
 
           # fix dns resolution
-          sudo echo 127.0.0.1  vhost-1.lan >> /etc/hosts
+          sudo bash -c "echo 127.0.0.1  vhost-1.lan >> /etc/hosts"
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
