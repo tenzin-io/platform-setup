@@ -1,18 +1,18 @@
-name: 05-k8s-setup/cluster-1
+name: 03-cluster-setup/vhost
 
 on:
-#  push:
-#    branches:
-#      - main
-#    paths:
-#      - '02-vm-provisioner/vhost-1/**'
   workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+
 
 env:
-  WORKFLOW_DIR: 05-k8s-setup/cluster-1
+  WORKFLOW_DIR: 05-cluster-setup/vhost
 
 jobs:
   terraform:
+    environment: ${{ inputs.environment }}
     runs-on: [ubuntu-latest]
     permissions:
       contents: read
@@ -23,7 +23,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-     
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.9"
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -41,7 +45,7 @@ jobs:
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            secrets/data/ansible-playbooks/ansible-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+            kubernetes-secrets/data/kubeconfig/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID}} kubeconfig | KUBECONFIG ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
@@ -52,12 +56,30 @@ jobs:
       
       - name: Setup kubernetes-admin.conf
         run: |-
+          touch kubernetes-admin.conf
+          chmod 0600 kubernetes-admin.cof
           cat<<'eof' > kubernetes-admin.conf
-          ${{ secrets.KUBECONFIG }}
+          ${{ steps.vault-secrets.outputs.KUBECONFIG }}
+          eof
+
+      - name: Setup state.config
+        run: |-
+          cat<<'eof' > state.config
+          key            = "terraform/03-cluster-setup/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}.tfstate"
+          bucket         = "tenzin-io"
+          dynamodb_table = "tenzin-io"
+          region         = "us-east-1"
+          eof
+
+      - name: Setup terraform.tfvars
+        run: |-
+          cat<<'eof' > terraform.tfvars
+          cluster_name     = "${{ vars.CLUSTER_NAME }}"
+          cluster_uuid     = "${{ vars.CLUSTER_UUID }}"
           eof
 
       - name: Run Terraform Init
-        run: terraform init
+        run: terraform init -backend-config=state.config
         
       - name: Run Terraform Format
         run: terraform fmt -check
@@ -65,11 +87,11 @@ jobs:
       - name: Run Terraform Validate
         run: terraform validate
         env:
-          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net
+          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net
 
       - name: Terraform apply
         run: terraform apply -auto-approve
         env:
-          HTTPS_PROXY: tenzin-b0369bd6-bc71-a215-1588-5863120c7f8b-agent-node-0.tail508ed.ts.net:3128
+          HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net
 
 ...
