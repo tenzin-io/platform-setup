@@ -8,7 +8,7 @@ on:
 
 
 env:
-  WORKFLOW_DIR: 05-cluster-setup/vhost
+  WORKFLOW_DIR: 03-cluster-setup/vhost
 
 jobs:
   terraform:
@@ -45,7 +45,7 @@ jobs:
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            kubernetes-secrets/data/kubeconfig/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID}} kubeconfig | KUBECONFIG ;
+            kubernetes-secrets/data/kubeconfig/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }} kubeconfig | KUBECONFIG ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
