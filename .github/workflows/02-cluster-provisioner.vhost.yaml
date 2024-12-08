@@ -58,7 +58,6 @@ jobs:
 
       - name: Setup secrets
         run: |
-
           # make ~/.ssh folder
           test -e ~/.ssh || mkdir ~/.ssh
 
