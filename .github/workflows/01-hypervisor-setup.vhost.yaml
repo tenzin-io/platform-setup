@@ -2,16 +2,12 @@ name: 01-hypervisor-setup/vhost
 
 on:
   workflow_dispatch:
-    inputs:
-      environment:
-        type: environment
 
 env:
   WORKFLOW_DIR: 01-hypervisor-setup/vhost
 
 jobs:
   terraform:
-    environment: ${{ inputs.environment }}
     runs-on: [ubuntu-latest]
     permissions:
       contents: read
