@@ -9,3 +9,16 @@ variable "cluster_uuid" {
 variable "vpc_network_cidr" {
   type = string
 }
+
+variable "vault_address" {
+  type = string
+}
+
+variable "vault_username" {
+  type = string
+}
+
+variable "vault_password" {
+  type      = string
+  sensitive = true
+}

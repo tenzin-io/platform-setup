@@ -5,6 +5,12 @@ terraform {
       version = "0.8.1"
     }
   }
+  backend "s3" {
+    key            = ""
+    bucket         = ""
+    dynamodb_table = ""
+    region         = ""
+  }
 }
 
 data "terraform_remote_state" "hypervisor" {
@@ -55,6 +61,10 @@ module "cluster_1" {
 
   cluster_name = var.cluster_name
   cluster_uuid = var.cluster_uuid
+
+  vault_address  = var.vault_address
+  vault_username = var.vault_username
+  vault_password = var.vault_password
 
   vpc_network_mode = "nat"
   vpc_network_cidr = var.vpc_network_cidr
