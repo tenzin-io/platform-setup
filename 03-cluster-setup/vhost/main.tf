@@ -24,12 +24,23 @@ terraform {
   }
 
   backend "s3" {
-    bucket         = "tenzin-io"
-    key            = "terraform/cluster-1.state"
-    dynamodb_table = "tenzin-io"
-    region         = "us-east-1"
+    key            = ""
+    bucket         = ""
+    dynamodb_table = ""
+    region         = ""
   }
 }
+
+
+data "vault_generic_secret" "kubeconfig" {
+  path = "kubernetes-secrets/kubeconfig/${var.cluster_name}-${var.cluster_uuid}"
+}
+
+resource "local_file" "kubeconfig" {
+  content  = data.vault_generic_secret.kubeconfig.data["kubeconfig"]
+  filename = "kubernetes-admin.conf"
+}
+
 
 # module "cloudflare_tunnel" {
 #   source                  = "./terraform-modules/kubernetes/cloudflare-tunnel"

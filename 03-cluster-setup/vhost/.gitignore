@@ -1,0 +1,5 @@
+.terraform
+kubernetes-admin.conf
+terraform-modules
+terraform.tfvars
+backend.tf
