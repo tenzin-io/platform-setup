@@ -5,12 +5,6 @@ terraform {
       version = "0.8.1"
     }
   }
-  backend "s3" {
-    bucket         = "tenzin-io"
-    key            = "terraform/02-vm-provisioner/vhost.tfstate"
-    dynamodb_table = "tenzin-io"
-    region         = "us-east-1"
-  }
 }
 
 data "terraform_remote_state" "hypervisor" {
@@ -53,16 +47,14 @@ resource "null_resource" "install_packages" {
   }
 }
 
-resource "random_uuid" "cluster_uuid" {}
-
 // virtual machines on vhost_1
 module "cluster_1" {
   depends_on = [null_resource.install_packages]
   count      = 1
-  source         = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
+  source     = "git::https://github.com/tenzin-io/terraform-modules.git//libvirt/cluster?ref=main"
 
   cluster_name = var.cluster_name
-  cluster_uuid = random_uuid.cluster_uuid.result
+  cluster_uuid = var.cluster_uuid
 
   vpc_network_mode = "nat"
   vpc_network_cidr = var.vpc_network_cidr
@@ -85,37 +77,3 @@ module "cluster_1" {
   worker_memory_size_mib = 16 * 1024 // gib
   worker_disk_size_mib   = 64 * 1024 // gib
 }
-
-# module "simple_network" {
-#   source       = "../terraform-modules/libvirt/virtual-network"
-#   name         = "simple-network"
-#   network_cidr = "10.0.0.0/16"
-# }
-# 
-# resource "libvirt_pool" "simple_datastore" {
-#   name = "simple-datastore"
-#   type = "dir"
-#   target {
-#     path = "/data/simple-datastore"
-#   }
-# }
-# 
-# module "simple_vm" {
-#   source         = "../terraform-modules/libvirt/virtual-machine"
-#   name           = "simple-vm-0"
-#   datastore_name = libvirt_pool.simple_datastore.name
-#   base_volume = {
-#     id   = libvirt_volume.ubuntu_cloud_image.id
-#     name = libvirt_volume.ubuntu_cloud_image.name
-#     pool = libvirt_pool.cloud_images.name
-#   }
-#   network_id      = module.simple_network.network_id
-#   addresses       = [cidrhost(module.simple_network.network_cidr, 4)]
-#   cpu_count       = 4
-#   memory_size_mib = 8 * 1024  // gib
-#   disk_size_mib   = 30 * 1024 // gib
-# 
-#   launch_script = templatefile("${path.module}/templates/simple_vm.sh", {
-#     tailscale_auth_key = "tskey-auth-kbxjqQTxAV11CNTRL-1jTgaxosyS9iktZ6YtqPT9TR4ADDi2UTY"
-#   })
-# }
