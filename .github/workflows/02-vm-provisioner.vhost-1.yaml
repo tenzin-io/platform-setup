@@ -1,0 +1,115 @@
+name: 02-cluster-provisioner/vhost
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        type: environment
+
+env:
+  WORKFLOW_DIR: 02-cluster-provisioner/vhost
+
+jobs:
+  terraform:
+    runs-on: [ubuntu-latest]
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        working-directory: ${{ env.WORKFLOW_DIR }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "~1.9"
+     
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::130900203380:role/tenzin-io.platform-setup
+          aws-region: us-east-1
+
+      - name: Get Vault token
+        id: vault-secrets
+        uses: hashicorp/vault-action@v2
+        with:
+          url: https://vault.tenzin.io
+          role: tenzin-io.platform-setup
+          method: jwt
+          exportToken: true
+          secrets: |
+            secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
+            secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
+            secrets/data/platform-setup/automation-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
+
+      - name: Tailscale connection
+        uses: tailscale/github-action@v2
+        with:
+          oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
+          tags: tag:ci
+
+      - name: Setup secrets
+        run: |
+
+          # make ~/.ssh folder
+          test -e ~/.ssh || mkdir ~/.ssh
+
+          # setup tenzin-bot.key
+          cat <<EOF > tenzin-bot.key
+          ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
+          EOF
+          chmod 0600 tenzin-bot.key
+          cp tenzin-bot.key ~/.ssh/tenzin-bot.key
+
+          # setup ssh config
+          cat <<EOF > ~/.ssh/config
+          StrictHostKeyChecking no
+
+          Host bastion
+            Hostname tenzins-pi
+            User tenzin-bot
+            IdentityFile ~/.ssh/tenzin-bot.key
+          
+          Host vhost-1.lan
+            ProxyJump bastion
+            IdentityFile ~/.ssh/tenzin-bot.key
+          EOF
+
+      - name: Setup state.config
+        run: |-
+          cat<<'eof' > state.config
+          key            = "terraform/02-cluster-provisioner/${{ env.CLUSTER_NAME }}-${{ env.CLUSTER_UUID }}.tfstate"
+          bucket         = "tenzin-io"
+          dynamodb_table = "tenzin-io"
+          region         = "us-east-1"
+          eof
+
+      - name: Setup terraform.tfvars
+        run: |-
+          cat<<'eof' > terraform.tfvars
+          cluster_name     = "${{ env.CLUSTER_NAME }}"
+          cluster_uuid     = "${{ env.CLUSTER_UUID }}"
+          vpc_network_cidr = "${{ env.VPC_NETWORK_CIDR }}"
+
+          # for kubeconfig publishing
+          vault_address  = "{{ env.VAULT_ADDRESS }}"
+          vault_username = "${{ env.VAULT_USERNAME }}"
+          vault_password = "${{ secrets.VAULT_PASSWORD }}"
+          eof
+
+      - name: Run Terraform Init
+        run: terraform init -backend-config=state.config
+        
+      - name: Run Terraform Format
+        run: terraform fmt -check
+        
+      - name: Run Terraform Validate
+        run: terraform validate
+
+      - name: Terraform apply
+        run: terraform apply -auto-approve
+...
