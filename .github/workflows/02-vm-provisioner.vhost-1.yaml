@@ -11,6 +11,7 @@ env:
 
 jobs:
   terraform:
+    environment: ${{ inputs.environment }}
     runs-on: [ubuntu-latest]
     permissions:
       contents: read
@@ -96,7 +97,7 @@ jobs:
           vpc_network_cidr = "${{ env.VPC_NETWORK_CIDR }}"
 
           # for kubeconfig publishing
-          vault_address  = "{{ env.VAULT_ADDRESS }}"
+          vault_address  = "${{ env.VAULT_ADDRESS }}"
           vault_username = "${{ env.VAULT_USERNAME }}"
           vault_password = "${{ secrets.VAULT_PASSWORD }}"
           eof
