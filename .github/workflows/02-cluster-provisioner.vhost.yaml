@@ -130,7 +130,7 @@ jobs:
               terraform ${{ inputs.terraform_action }} -auto-approve=${{ inputs.confirm_approve }}
               ;;
             *)
-              echo error: invalid terraform action
+              echo error: invalid terraform_action
               exit 1
               ;;
           esac
