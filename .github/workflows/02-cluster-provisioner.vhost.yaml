@@ -1,4 +1,5 @@
 name: 02-cluster-provisioner/vhost
+run-name: "[${{ inputs.environment }}] - terraform ${{ inputs.terraform_action }}"
 
 on:
   workflow_dispatch:
