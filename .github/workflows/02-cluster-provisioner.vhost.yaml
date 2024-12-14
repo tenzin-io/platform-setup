@@ -70,7 +70,6 @@ jobs:
           oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:ci
-          version: latest
 
       - name: Setup secrets
         run: |
