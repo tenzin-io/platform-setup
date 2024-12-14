@@ -3,9 +3,17 @@ name: 03-cluster-setup/vhost
 on:
   workflow_dispatch:
     inputs:
+      terraform_action:
+        description: Terraform action to execute
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply -auto-approve
+          - destroy -auto-approve
       environment:
         type: environment
-
 
 env:
   WORKFLOW_DIR: 03-cluster-setup/vhost
@@ -87,7 +95,7 @@ jobs:
           HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net:3128
 
       - name: Terraform apply
-        run: terraform apply -auto-approve
+        run: terraform ${{ inputs.terraform_action }}
         env:
           HTTPS_PROXY: ${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}-agent-node-0.tail508ed.ts.net:3128
 

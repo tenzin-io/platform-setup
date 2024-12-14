@@ -3,6 +3,16 @@ name: 02-cluster-provisioner/vhost
 on:
   workflow_dispatch:
     inputs:
+      terraform_action:
+        description: Terraform action to execute
+        required: true
+        default: plan
+        type: choice
+        options:
+          - plan
+          - apply -auto-approve
+          - destroy -auto-approve
+
       environment:
         type: environment
 
@@ -105,5 +115,5 @@ jobs:
         run: terraform validate
 
       - name: Terraform apply
-        run: terraform apply -auto-approve
+        run: terraform ${{ inputs.terraform_action }}
 ...
