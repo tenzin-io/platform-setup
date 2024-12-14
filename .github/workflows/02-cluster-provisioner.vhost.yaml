@@ -11,9 +11,13 @@ on:
         type: choice
         options:
           - plan
-          - apply -auto-approve
-          - destroy -auto-approve
-
+          - apply -auto-approve=${{ inputs.approve_confirm }}
+          - destroy -auto-approve=${{ inputs.approve_confirm }}
+      approve_confirm:
+        description: Approve?
+        type: boolean
+        required: true
+        default: false
       environment:
         type: environment
 
