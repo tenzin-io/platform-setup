@@ -1,4 +1,5 @@
-name: 03-cluster-setup/vhost - [ ${{ github.events.inputs.environment }} ] - terraform ${{ github.events.inputs.terraform_action}}
+name: 03-cluster-setup/vhost 
+run-name: [ ${{ github.events.inputs.environment }} ] - terraform ${{ github.events.inputs.terraform_action}}
 
 on:
   workflow_dispatch:
