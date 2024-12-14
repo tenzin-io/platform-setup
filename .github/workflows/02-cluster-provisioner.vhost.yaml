@@ -11,9 +11,9 @@ on:
         type: choice
         options:
           - plan
-          - apply -auto-approve=${{ inputs.approve_confirm }}
-          - destroy -auto-approve=${{ inputs.approve_confirm }}
-      approve_confirm:
+          - apply
+          - destroy
+      confirm_approve:
         description: Approve?
         type: boolean
         required: true
@@ -119,6 +119,18 @@ jobs:
       - name: Run Terraform Validate
         run: terraform validate
 
-      - name: Terraform apply
-        run: terraform ${{ inputs.terraform_action }}
+      - name: Terraform Action
+        run: |-
+          case ${{ inputs.terraform_action }} in
+            plan)
+              terraform ${{ inputs.terraform_action }}
+              ;;
+            apply|destroy)
+              terraform ${{ inputs.terraform_action }} -auto-approve=${{ inputs.confirm_approve }}
+              ;;
+            *)
+              echo error: invalid terraform action
+              exit 1
+              ;;
+          esac
 ...
