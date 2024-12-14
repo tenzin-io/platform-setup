@@ -36,12 +36,20 @@ data "vault_generic_secret" "kubeconfig" {
   path = "kubernetes-secrets/kubeconfig/${var.cluster_name}-${var.cluster_uuid}"
 }
 
+
+resource "terraform_data" "kubeconfig" {
+  triggers_replace = [fileexists("${path.module}/kubernetes-admin.conf")]
+}
+
+
 resource "local_sensitive_file" "kubeconfig" {
   content         = data.vault_generic_secret.kubeconfig.data["kubeconfig"]
   filename        = "${path.module}/kubernetes-admin.conf"
   file_permission = "0600"
+  lifecycle {
+    replace_triggered_by = [terraform_data.kubeconfig]
+  }
 }
-
 
 # module "cloudflare_tunnel" {
 #   source                  = "./terraform-modules/kubernetes/cloudflare-tunnel"
