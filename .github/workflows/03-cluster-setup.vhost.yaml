@@ -53,7 +53,6 @@ jobs:
           secrets: |
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
-            kubernetes-secrets/data/kubeconfig/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }} kubeconfig | KUBECONFIG ;
 
       - name: Tailscale connection
         uses: tailscale/github-action@v2
@@ -61,14 +60,6 @@ jobs:
           oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
           tags: tag:ci
-      
-      - name: Setup kubernetes-admin.conf
-        run: |-
-          touch kubernetes-admin.conf
-          chmod 0600 kubernetes-admin.conf
-          cat<<'eof' > kubernetes-admin.conf
-          ${{ steps.vault-secrets.outputs.KUBECONFIG }}
-          eof
 
       - name: Setup state.config
         run: |-

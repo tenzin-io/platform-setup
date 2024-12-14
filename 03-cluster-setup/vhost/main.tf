@@ -38,7 +38,7 @@ data "vault_generic_secret" "kubeconfig" {
 
 resource "local_sensitive_file" "kubeconfig" {
   content         = data.vault_generic_secret.kubeconfig.data["kubeconfig"]
-  filename        = "kubernetes-admin.conf"
+  filename        = "${path.module}/kubernetes-admin.conf"
   file_permission = "0600"
 }
 
