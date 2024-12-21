@@ -1,0 +1,100 @@
+#!/usr/bin/env ansible-playbook
+- name: Setup hypervisors
+  hosts: hypervisors
+
+  tasks:
+    - name: Install Hypervisor packages
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - qemu-kvm
+        - libvirt-daemon-system
+        - libvirt-clients
+        - bridge-utils
+        - genisoimage
+
+    - name: Disable and stop AppArmor service
+      systemd:
+        name: apparmor
+        state: stopped
+        enabled: no
+
+    - name: Add libvirt, libvirt-qemu, and libvirt-dnsmasq groups to Ansible user
+      user:
+        name: "{{ ansible_ssh_user }}"
+        groups: libvirt,libvirt-qemu,libvirt-dnsmasq
+        append: yes
+
+    - name: Create /data directory for VM storage
+      ansible.builtin.file:
+        path: /data
+        state: directory
+        mode: 0755
+        owner: libvirt-qemu
+        group: kvm
+
+    - name: Grant passwordless sudo to Ansible user
+      copy:
+        dest: "/etc/sudoers.d/{{ ansible_ssh_user }}"
+        content: "{{ ansible_ssh_user }} ALL=(ALL) NOPASSWD:ALL"
+        mode: 0440
+        owner: root
+        group: root
+
+    - name: Update OS physical volume
+      lvg:
+        vg: ubuntu-vg
+        pvs: "{{ root_disks | join(',') }}"
+        pvresize: True
+
+    - name: Update OS logical vol
+      lvol:
+        vg: ubuntu-vg
+        lv: ubuntu-lv
+        size: 95%PVS
+        resizefs: True
+
+    - name: Update /etc/default/grub
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: 'GRUB_CMDLINE_LINUX="amd_iommu=on amd_iommu=pt apparmor=0"'
+      notify:
+        - update grub
+        - reboot system
+      when: has_nvidia_gpu == False
+
+    - name: Update /etc/default/grub for GPU pass through
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^GRUB_CMDLINE_LINUX='
+        line: "GRUB_CMDLINE_LINUX=\"amd_iommu=on amd_iommu=pt apparmor=0 video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids={{ gpu_pci_ids | join(',') }} vfio-pci.disable_vga=1\""
+      notify:
+        - update grub
+        - reboot system
+      when: has_nvidia_gpu == True
+
+    - name: Blacklist nvidia modules
+      copy:
+        dest: /etc/modprobe.d/no-nvidia.conf
+        content: |-
+          blacklist nvidia
+          blacklist nvidia_drm
+          blacklist nvidia_uvm
+          blacklist nvidia_modeset
+          blacklist nvidiafb
+          blacklist nouveau
+      notify: update initramfs
+      when: has_nvidia_gpu == True
+
+  handlers:
+    - name: update grub
+      command: update-grub
+
+    - name: update initramfs
+      command: update-initramfs -u
+
+    - name: reboot system
+      reboot:
+        reboot_timeout: 300
