@@ -1,0 +1,51 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  early-commands:
+    - hostnamectl set-hostname {{ hypervisor_hostname }} # update hostname quickly
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: true
+        dhcp4-overrides:
+          use-hostname: True
+          route-metric: 100
+
+  ssh:
+    install-server: True
+
+  storage:
+    layout:
+      name: lvm
+      sizing-policy: all
+      match:
+        path: /dev/nvme0n1
+
+  packages:
+    - qemu-kvm
+    - libvirt-daemon-system
+    - libvirt-clients
+    - bridge-utils
+    - genisoimage
+
+  user-data:
+    hostname: {{ hypervisor_hostname }}
+    users:
+      - name: {{ console_username }}
+        passwd: {{ console_password | password_hash }}
+        groups: libvirt, libvirt-qemu, libvirt-dnsmasq
+        shell: /bin/bash
+        lock_passwd: False
+        sudo: ALL=(ALL) NOPASSWD:ALL
+        ssh_authorized_keys:
+          - "{{ automation_ssh_pubkey }}"
+
+  late-commands:
+    - curtin in-target --target /target -- sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 biosdevname=0 apparmor=0"/' /etc/default/grub
+    - curtin in-target --target /target -- systemctl disable apparmor
+    - curtin in-target --target /target -- update-grub2
+    - curtin in-target --target /target -- mkdir -m 0755 -p /data
+    - curtin in-target --target /target -- chown libvirt-qemu:kvm /data

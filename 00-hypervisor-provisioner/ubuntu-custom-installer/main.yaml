@@ -1,0 +1,125 @@
+---
+- name: Hypervisor Provisioner
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  become: yes
+  vars:
+    ubuntu_iso_url: https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso
+  vars_prompt:
+    - name: hypervisor_hostname
+      prompt: Enter the hypervisor host name
+      private: no
+      default: vhost
+    - name: console_username
+      prompt: Enter the console username
+      private: no
+      default: "{{ lookup('env', 'CONSOLE_USERNAME') | default('admin', True) }}"
+    - name: console_password
+      prompt: Enter the console password
+      private: yes
+      default: "{{ lookup('env', 'CONSOLE_PASSWORD') }}"
+    - name: automation_ssh_pubkey
+      prompt: Enter the automation ssh public key
+      private: no
+      default: "{{ lookup('env', 'AUTOMATION_SSH_PUBKEY') }}"
+  tasks:
+    - name: Install prereqs packages
+      package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - xorriso
+        - genisoimage
+
+    - name: Create directories for customization
+      file:
+        path: "{{ item }}" 
+        state: directory
+      loop:
+        - output
+        - downloads
+        - overlay/lowerdir
+        - overlay/upperdir
+        - overlay/workdir
+        - overlay/merged
+
+    - name: Download Ubuntu ISO
+      get_url:
+        url: "{{ ubuntu_iso_url }}"
+        dest: "downloads/{{ ubuntu_iso_url | basename }}"
+    
+    - name: Create the nocloud directory
+      file:
+        path: overlay/upperdir/nocloud
+        state: directory
+
+    - name: Generate user-data file
+      template:
+        src: user-data.j2
+        dest: overlay/upperdir/nocloud/user-data
+
+    - name: Generate meta-data file
+      template:
+        src: meta-data.j2
+        dest: overlay/upperdir/nocloud/meta-data
+
+    - name: Create the boot/grub directory
+      file:
+        path: overlay/upperdir/boot/grub
+        state: directory
+
+    - name: Generate grub.cfg file
+      template:
+        src: grub.cfg.j2
+        dest: overlay/upperdir/boot/grub/grub.cfg
+
+    - name: Check mounts and unmount if necessary
+      shell: |-
+        mountpoint -q overlay/lowerdir && umount overlay/lowerdir || exit 0
+        mountpoint -q overlay/merged  && umount overlay/merged || exit 0
+      changed_when: false
+ 
+    - name: Create the overlayfs
+      shell: |
+        mount -o loop downloads/{{ ubuntu_iso_url | basename }} overlay/lowerdir
+        mount -t overlay overlay -o lowerdir=overlay/lowerdir,upperdir=overlay/upperdir,workdir=overlay/workdir overlay/merged
+      changed_when: false
+
+    - name: Build the ISO
+      shell: |-
+        dd bs=1 count=446 if=downloads/{{ ubuntu_iso_url | basename }} of=output/mbr.img
+        dd bs=512 count=10144 skip=5406916 if=downloads/{{ ubuntu_iso_url | basename }} of=output/EFI.img
+
+        xorriso -outdev output/{{ hypervisor_hostname }}.iso -map overlay/merged / -- \
+          -volid '{{ ubuntu_iso_url | basename | replace('.iso', '') }}' \
+          -boot_image grub grub2_mbr=output/mbr.img \
+          -boot_image any partition_table=on \
+          -boot_image any partition_cyl_align=off \
+          -boot_image any partition_offset=16 \
+          -boot_image any mbr_force_bootable=on \
+          -append_partition 2 28732ac11ff8d211ba4b00a0c93ec93b output/EFI.img \
+          -boot_image any appended_part_as=gpt \
+          -boot_image any part_like_isohybrid=on \
+          -boot_image any iso_mbr_part_type=a2a0d0ebe5b9334487c068b6b72699c7 \
+          -boot_image any cat_path='/boot.catalog' \
+          -boot_image grub bin_path='/boot/grub/i386-pc/eltorito.img' \
+          -boot_image any platform_id=0x00 \
+          -boot_image any emul_type=no_emulation \
+          -boot_image any load_size=2048 \
+          -boot_image any boot_info_table=on \
+          -boot_image grub grub2_boot_info=on \
+          -boot_image any next \
+          -boot_image any efi_path=--interval:appended_partition_2:all:: \
+          -boot_image any platform_id=0xef \
+          -boot_image any emul_type=no_emulation \
+          -boot_image any load_size=5193728 \
+          -boot_image isolinux partition_entry=gpt_basdat 
+      args:
+        creates: output/{{ hypervisor_hostname }}.iso
+
+    - name: Unmount the filesystems 
+      shell: | 
+        umount overlay/merged
+        umount overlay/lowerdir
+      changed_when: false
