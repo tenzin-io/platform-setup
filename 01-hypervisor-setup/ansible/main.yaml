@@ -1,7 +1,6 @@
 #!/usr/bin/env ansible-playbook
 - name: Setup hypervisors
   hosts: hypervisors
-
   tasks:
     - name: Install Hypervisor packages
       apt:
