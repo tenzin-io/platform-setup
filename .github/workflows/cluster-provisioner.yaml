@@ -1,5 +1,5 @@
 name: cluster-provisioner
-run-name: "[${{ inputs.cluster_name }}] - terraform ${{ inputs.terraform_action }}"
+run-name: "[${{ inputs.cluster_name }}@${{ inputs.hypervisor_hostname }}] - terraform ${{ inputs.terraform_action }}"
 
 on:
   workflow_dispatch:
