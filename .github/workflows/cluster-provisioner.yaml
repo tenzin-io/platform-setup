@@ -1,9 +1,25 @@
 name: cluster-provisioner
-run-name: "[${{ inputs.environment }}] - terraform ${{ inputs.terraform_action }}"
+run-name: "[${{ inputs.cluster_name }}] - terraform ${{ inputs.terraform_action }}"
 
 on:
   workflow_dispatch:
     inputs:
+      hypervisor_hostname: Hypervisor hostname
+        description: Hypervisor hostname for cluster
+        required: true
+        type: string
+      cluster_name: Cluster name
+        description: Name of cluster (no spaces)
+        required: true
+        type: string
+      cluster_uuid: Cluster UUID
+        description: Unique identifier for cluster
+        required: true
+        type: string
+      vpc_cidr: VPC network CIDR
+        description: VPC network for cluster hosts
+        required: true
+        type: string
       terraform_action:
         description: Terraform action to execute
         required: true
@@ -18,8 +34,6 @@ on:
         type: boolean
         required: true
         default: false
-      environment:
-        type: environment
 
 env:
   WORKFLOW_DIR: 02-cluster-provisioner/terraform
@@ -27,7 +41,6 @@ env:
 
 jobs:
   terraform:
-    environment: ${{ inputs.environment }}
     runs-on: [ubuntu-latest]
     permissions:
       contents: read
@@ -58,6 +71,7 @@ jobs:
           method: jwt
           exportToken: true
           secrets: |
+            secrets/data/github-actions/tailscale tailscale_domain_name | TS_DOMAIN_NAME ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_id | TS_OAUTH_CLIENT_ID ;
             secrets/data/github-actions/tailscale tailscale_oauth_client_secret | TS_OAUTH_CLIENT_SECRET ;
             secrets/data/platform-setup/automation-ssh-user/tenzin-bot SSH_PRIVATE_KEY_ED25519 | SSH_PRIVATE_KEY_ED25519 ;
@@ -81,7 +95,6 @@ jobs:
           ${{ steps.vault-secrets.outputs.SSH_PRIVATE_KEY_ED25519 }}
           EOF
           chmod 0600 tenzin-bot.key
-          cp tenzin-bot.key ~/.ssh/tenzin-bot.key
 
           # setup ssh config
           cat <<EOF > ~/.ssh/config
@@ -91,7 +104,7 @@ jobs:
       - name: Setup state.config
         run: |-
           cat<<'eof' > state.config
-          key    = "terraform/cluster-provisioner/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}.tfstate"
+          key    = "terraform/cluster-provisioner/${{ inputs.cluster_name }}-${{ inputs.cluster_uuid }}.tfstate"
           bucket = "tenzin-cloud"
           region = "us-east-1"
           eof
@@ -99,10 +112,10 @@ jobs:
       - name: Setup terraform.tfvars
         run: |-
           cat<<'eof' > terraform.tfvars
-          hypervisor_hostname = "${{ vars.HYPERVISOR_HOSTNAME }}.${{ vars.TAILSCALE_NETWORK }}"
-          cluster_name        = "${{ vars.CLUSTER_NAME }}"
-          cluster_uuid        = "${{ vars.CLUSTER_UUID }}"
-          vpc_network_cidr    = "${{ vars.VPC_NETWORK_CIDR }}"
+          hypervisor_hostname = "${{ inputs.hypervisor_hostname }}.${{ steps.vault-secrets.outputs.TS_DOMAIN_NAME }}"
+          cluster_name        = "${{ inputs.cluster_name }}"
+          cluster_uuid        = "${{ inputs.cluster_uuid }}"
+          vpc_network_cidr    = "${{ inputs.vpc_network_cidr }}"
 
           # for kubeconfig publishing
           vault_address  = "${{ env.VAULT_ADDRESS }}"
