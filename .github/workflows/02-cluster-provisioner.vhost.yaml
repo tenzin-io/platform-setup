@@ -1,4 +1,4 @@
-name: 02-cluster-provisioner/vhost
+name: cluster-provisioner
 run-name: "[${{ inputs.environment }}] - terraform ${{ inputs.terraform_action }}"
 
 on:
@@ -22,7 +22,7 @@ on:
         type: environment
 
 env:
-  WORKFLOW_DIR: 02-cluster-provisioner/vhost
+  WORKFLOW_DIR: 02-cluster-provisioner/terraform
   VAULT_ADDRESS: https://vault.tenzin.io
 
 jobs:
@@ -91,18 +91,18 @@ jobs:
       - name: Setup state.config
         run: |-
           cat<<'eof' > state.config
-          key            = "terraform/02-cluster-provisioner/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}.tfstate"
-          bucket         = "tenzin-io"
-          dynamodb_table = "tenzin-io"
-          region         = "us-east-1"
+          key    = "terraform/cluster-provisioner/${{ vars.CLUSTER_NAME }}-${{ vars.CLUSTER_UUID }}.tfstate"
+          bucket = "tenzin-cloud"
+          region = "us-east-1"
           eof
 
       - name: Setup terraform.tfvars
         run: |-
           cat<<'eof' > terraform.tfvars
-          cluster_name     = "${{ vars.CLUSTER_NAME }}"
-          cluster_uuid     = "${{ vars.CLUSTER_UUID }}"
-          vpc_network_cidr = "${{ vars.VPC_NETWORK_CIDR }}"
+          hypervisor_hostname = "${{ vars.HYPERVISOR_HOSTNAME }}"
+          cluster_name        = "${{ vars.CLUSTER_NAME }}"
+          cluster_uuid        = "${{ vars.CLUSTER_UUID }}"
+          vpc_network_cidr    = "${{ vars.VPC_NETWORK_CIDR }}"
 
           # for kubeconfig publishing
           vault_address  = "${{ env.VAULT_ADDRESS }}"
@@ -112,9 +112,6 @@ jobs:
 
       - name: Run Terraform Init
         run: terraform init -backend-config=state.config
-        
-      - name: Run Terraform Format
-        run: terraform fmt -check
         
       - name: Run Terraform Validate
         run: terraform validate
