@@ -16,7 +16,7 @@ on:
         description: Cluster UUID
         required: true
         type: string
-      vpc_cidr: 
+      vpc_network_cidr: 
         description: VPC network CIDR
         required: true
         type: string
