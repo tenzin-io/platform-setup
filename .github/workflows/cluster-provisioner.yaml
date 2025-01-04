@@ -99,7 +99,7 @@ jobs:
       - name: Setup terraform.tfvars
         run: |-
           cat<<'eof' > terraform.tfvars
-          hypervisor_hostname = "${{ vars.HYPERVISOR_HOSTNAME }}"
+          hypervisor_hostname = "${{ vars.HYPERVISOR_HOSTNAME }}.${{ vars.TAILSCALE_NETWORK }}"
           cluster_name        = "${{ vars.CLUSTER_NAME }}"
           cluster_uuid        = "${{ vars.CLUSTER_UUID }}"
           vpc_network_cidr    = "${{ vars.VPC_NETWORK_CIDR }}"
