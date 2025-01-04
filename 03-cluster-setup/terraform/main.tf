@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.0"
+  required_version = "~> 1.9"
   required_providers {
     vault = {
       source  = "hashicorp/vault"
@@ -24,10 +24,10 @@ terraform {
   }
 
   backend "s3" {
-    key            = ""
-    bucket         = ""
-    dynamodb_table = ""
-    region         = ""
+    key          = ""
+    bucket       = ""
+    region       = ""
+    use_lockfile = true
   }
 }
 

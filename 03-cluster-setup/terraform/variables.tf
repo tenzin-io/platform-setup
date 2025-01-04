@@ -5,3 +5,7 @@ variable "cluster_name" {
 variable "cluster_uuid" {
   type = string
 }
+
+variable "tailscale_network" {
+  type = string
+}

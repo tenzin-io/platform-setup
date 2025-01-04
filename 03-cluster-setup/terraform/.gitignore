@@ -1,0 +1,4 @@
+.terraform
+kubernetes.conf
+terraform.tfvars
+state.config
