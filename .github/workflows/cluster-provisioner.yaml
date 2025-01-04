@@ -4,20 +4,20 @@ run-name: "[${{ inputs.cluster_name }}] - terraform ${{ inputs.terraform_action 
 on:
   workflow_dispatch:
     inputs:
-      hypervisor_hostname: Hypervisor hostname
-        description: Hypervisor hostname for cluster
+      hypervisor_hostname: 
+        description: Hypervisor hostname
         required: true
         type: string
-      cluster_name: Cluster name
-        description: Name of cluster (no spaces)
+      cluster_name: 
+        description: Cluster name
         required: true
         type: string
-      cluster_uuid: Cluster UUID
-        description: Unique identifier for cluster
+      cluster_uuid: 
+        description: Cluster UUID
         required: true
         type: string
-      vpc_cidr: VPC network CIDR
-        description: VPC network for cluster hosts
+      vpc_cidr: 
+        description: VPC network CIDR
         required: true
         type: string
       terraform_action:
