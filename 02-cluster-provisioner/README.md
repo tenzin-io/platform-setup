@@ -1,2 +1,2 @@
 # README
-The folder has components for provisioning virtual machines.
+The folder has components for provisioning Kubernetes clusters.
