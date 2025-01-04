@@ -50,7 +50,7 @@ jobs:
         working-directory: ${{ env.WORKFLOW_DIR }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: hashicorp/setup-terraform@v3
         with:
@@ -64,7 +64,7 @@ jobs:
 
       - name: Get Vault token
         id: vault-secrets
-        uses: hashicorp/vault-action@v2
+        uses: hashicorp/vault-action@v3
         with:
           url: ${{ env.VAULT_ADDRESS }}
           role: tenzin-io.platform-setup
@@ -79,7 +79,7 @@ jobs:
             secrets/data/vault-users/kubeconfig-publisher password | VAULT_PASSWORD ;
 
       - name: Tailscale connection
-        uses: tailscale/github-action@v2
+        uses: tailscale/github-action@v3
         with:
           oauth-client-id: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_ID }}
           oauth-secret: ${{ steps.vault-secrets.outputs.TS_OAUTH_CLIENT_SECRET }}
