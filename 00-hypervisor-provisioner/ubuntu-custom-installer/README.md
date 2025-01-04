@@ -1,6 +1,9 @@
 # README
 This workspace contains an Ansible playbook that helps build a custom Ubuntu installation ISO for autoinstall.  The ISO can then be copied onto a USB and used for baremetal automated installation of Ubuntu Server.
 
+# Major issue
+- This custom ISO doesn't boot on UEFI-only systems.  In particular, Asrock B650 motherboard.  It works fine on a Asrock B550 motherboard.
+
 ## Usage
 - Install pip `requirements.txt`
 - Setup environment variables for defaults (if needed).
