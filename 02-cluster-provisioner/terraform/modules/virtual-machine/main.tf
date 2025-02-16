@@ -27,13 +27,6 @@ resource "libvirt_volume" "root_disk" {
   pool             = var.datastore_name
 }
 
-resource "libvirt_volume" "data_disk" {
-  for_each = var.data_disks
-  name     = "${var.name}-${basename(each.key)}-disk.qcow2"
-  size     = each.value.disk_size_mib * 1024 * 1024 // size must be in bytes
-  pool     = var.datastore_name
-}
-
 resource "libvirt_domain" "machine" {
   name   = var.name
   memory = var.memory_size_mib
