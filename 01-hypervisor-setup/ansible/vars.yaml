@@ -1,0 +1,17 @@
+ansible_become: True
+
+# hypervisor vm automation user
+automation_user: ""
+
+# array of disks to use in root volume ubuntu-vg 
+# example array item: "/dev/disk/by-id/nvme-CT1000P3PSSD8_2233E6567FBE-part3"
+root_disks: []
+
+# gpu settings
+has_nvidia_gpu: False
+
+# a list of gpu pci_ids
+# helper command: lspci -nn | grep -i -e 10de | grep -i -e vga -e audio
+# helper command output: 01:00.0 VGA compatible controller [0300]: NVIDIA Corporation ... [10de:2702] (rev a1)
+# example array item: "10de:2702"
+gpu_pci_ids: []

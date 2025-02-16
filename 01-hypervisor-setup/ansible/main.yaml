@@ -1,7 +1,14 @@
 #!/usr/bin/env ansible-playbook
-- name: Setup hypervisors
-  hosts: hypervisors
+- name: Setup hypervisor
+  hosts: localhost
+  connection: local
+  vars_files:
+    - vars.yaml
+    - overrides.yaml
   tasks:
+    - debug:
+        msg: '{{ root_disks }}'
+
     - name: Install Hypervisor packages
       apt:
         name: "{{ item }}"
@@ -12,18 +19,26 @@
         - libvirt-clients
         - bridge-utils
         - genisoimage
-
+  
     - name: Disable and stop AppArmor service
       systemd:
         name: apparmor
         state: stopped
         enabled: no
 
-    - name: Add libvirt, libvirt-qemu, and libvirt-dnsmasq groups to Ansible user
-      user:
-        name: "{{ ansible_ssh_user }}"
-        groups: libvirt,libvirt-qemu,libvirt-dnsmasq
-        append: yes
+    - name: Update OS physical volume
+      lvg:
+        vg: ubuntu-vg
+        pvs: "{{ root_disks | join(',') }}"
+        pvresize: True
+      when: root_disks | length > 0
+
+    - name: Update OS logical vol
+      lvol:
+        vg: ubuntu-vg
+        lv: ubuntu-lv
+        size: 95%PVS
+        resizefs: True
 
     - name: Create /data directory for VM storage
       ansible.builtin.file:
@@ -33,37 +48,22 @@
         owner: libvirt-qemu
         group: kvm
 
-    - name: Grant passwordless sudo to Ansible user
+    - name: Add libvirt, libvirt-qemu, and libvirt-dnsmasq groups to automation user
+      user:
+        name: "{{ automation_user }}"
+        groups: libvirt,libvirt-qemu,libvirt-dnsmasq
+        append: yes
+      when: automation_user | length > 0
+
+    - name: Grant passwordless sudo to automation user
       copy:
-        dest: "/etc/sudoers.d/{{ ansible_ssh_user }}"
-        content: "{{ ansible_ssh_user }} ALL=(ALL) NOPASSWD:ALL"
+        dest: "/etc/sudoers.d/{{ automation_user }}"
+        content: "{{ automation_user }} ALL=(ALL) NOPASSWD:ALL"
         mode: 0440
         owner: root
         group: root
-
-    - name: Update OS physical volume
-      lvg:
-        vg: ubuntu-vg
-        pvs: "{{ root_disks | join(',') }}"
-        pvresize: True
-
-    - name: Update OS logical vol
-      lvol:
-        vg: ubuntu-vg
-        lv: ubuntu-lv
-        size: 95%PVS
-        resizefs: True
-
-    - name: Update /etc/default/grub
-      lineinfile:
-        path: /etc/default/grub
-        regexp: '^GRUB_CMDLINE_LINUX='
-        line: 'GRUB_CMDLINE_LINUX="amd_iommu=on amd_iommu=pt apparmor=0"'
-      notify:
-        - update grub
-        - reboot system
-      when: has_nvidia_gpu == False
-
+      when: automation_user | length > 0
+ 
     - name: Update /etc/default/grub for GPU pass through
       lineinfile:
         path: /etc/default/grub
@@ -72,7 +72,7 @@
       notify:
         - update grub
         - reboot system
-      when: has_nvidia_gpu == True
+      when: has_nvidia_gpu == True and ( gpu_pci_ids | length > 0 )
 
     - name: Blacklist nvidia modules
       copy:
@@ -84,7 +84,9 @@
           blacklist nvidia_modeset
           blacklist nvidiafb
           blacklist nouveau
-      notify: update initramfs
+      notify:
+        - update initramfs
+        - reboot system
       when: has_nvidia_gpu == True
 
   handlers:
@@ -95,5 +97,4 @@
       command: update-initramfs -u
 
     - name: reboot system
-      reboot:
-        reboot_timeout: 300
+      command: reboot
