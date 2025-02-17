@@ -1,3 +1,14 @@
+resource "libvirt_volume" "ubuntu_cloud_image" {
+  source = "https://cloud-images.ubuntu.com/noble/current/noble-server-cloudimg-amd64.img"
+  name   = "noble-server-cloudimg-amd64.img"
+  pool   = libvirt_pool.cloud_images.name
+  format = "qcow2"
+}
+
+data "vault_generic_secret" "dockerhub" {
+  path = "secrets/docker-hub/tenzinbot"
+}
+
 module "kubernetes" {
   count          = 1
   source         = "./modules/virtual-machine"
