@@ -2,15 +2,11 @@ variable "hypervisor_hostname" {
   type = string
 }
 
-variable "cluster_name" {
+variable "hypervisor_automation_user" {
   type = string
 }
 
-variable "cluster_uuid" {
-  type = string
-}
-
-variable "vpc_network_cidr" {
+variable "hypervisor_keyfile" {
   type = string
 }
 
@@ -25,4 +21,12 @@ variable "vault_username" {
 variable "vault_password" {
   type      = string
   sensitive = true
+}
+
+variable "vm_automation_user" {
+  type = string
+}
+
+variable "vm_automation_user_pubkey" {
+  type = string
 }

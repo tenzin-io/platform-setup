@@ -1,4 +1,4 @@
 .terraform
-tenzin-bot.key
 terraform.tfvars
-state.config
+terraform.tfstate
+terraform.tfstate.backup
