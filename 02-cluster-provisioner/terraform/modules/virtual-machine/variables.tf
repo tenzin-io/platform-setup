@@ -63,3 +63,11 @@ variable "ip_address" {
 variable "gateway_address" {
   type = string
 }
+
+variable "primary_dns_server" {
+  default = "1.1.1.1"
+}
+
+variable "secondary_dns_server" {
+  default = "8.8.8.8"
+}

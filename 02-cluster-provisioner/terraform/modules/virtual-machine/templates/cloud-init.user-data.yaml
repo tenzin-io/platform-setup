@@ -1,7 +1,7 @@
 #cloud-config
 hostname: ${hostname}
 fqdn: ${hostname}.local
-manage_etc_hosts: false
+manage_etc_hosts: true
 
 users:
   - name: ${automation_user}
@@ -21,12 +21,14 @@ chpasswd:
       type: text
 
 package_update: true
-package_upgrade: true
+pakage_upgrade: true
 packages:
   - git
   - curl
   - qemu-guest-agent
-  - avahi-daemon
+%{ if has_gpu_passthru ~}
+  - nvidia-driver-565-server 
+%{~ endif ~}
 
 # power_state:
 #  mode: reboot
@@ -34,17 +36,30 @@ packages:
 #  timeout: 300
 #  condition: true
 
-bootcmd:
+runcmd:
   - sed -i 's/^GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="mitigations=off"/g' /etc/default/grub
   - update-grub
-  - systemctl enable avahi-daemon && systemctl start avahi-daemon
+  - echo 'MulticastDNS=yes' >> /etc/systemd/resolved.conf
+  - systemctl daemon-reload
+  - systemctl restart systemd-networkd
+  - systemctl restart systemd-resolved
+  - bash /tmp/launch_script.sh
+
+write_files:
+  - path: /etc/systemd/network/10-netplan-en_interfaces.network.d/override.conf
+    owner: root:root
+    permissions: 0o644
+    content: |-
+      [Match]
+      Name=en*
+
+      [Network]
+      MulticastDNS=yes
 
 %{ if length(launch_script) > 0 ~}
-write_files:
-  - path: /var/lib/cloud/scripts/per-once/launch_script.sh
+  - path: /tmp/launch_script.sh
     owner: root:root
     permissions: 0o744
-    defer: true
     content: |-
       ${indent(6, launch_script)}
 

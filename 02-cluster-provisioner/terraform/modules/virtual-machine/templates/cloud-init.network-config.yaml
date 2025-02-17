@@ -1,11 +1,22 @@
 network:
   version: 2
+  renderer: networkd
   ethernets:
     en_interfaces:
       match:
         name: "en*"
+      dhcp4: no
+      dhcp4-overrides:
+        use-dns: false
+      dhcp6: no
+      dhcp6-overrides:
+        use-dns: false
       addresses:
         - ${ip_address}/24
-      gateway4: ${gateway_address}
-      dhcp4-overrides:
-        use-dns: true
+      routes:
+        - to: default
+          via: ${gateway_address}
+      nameservers:
+        addresses:
+          - ${primary_dns_server}
+          - ${secondary_dns_server}

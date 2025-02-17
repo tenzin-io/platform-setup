@@ -15,10 +15,13 @@ resource "libvirt_cloudinit_disk" "cloudinit_iso" {
     launch_script          = var.launch_script
     automation_user        = var.automation_user
     automation_user_pubkey = var.automation_user_pubkey
+    has_gpu_passthru       = var.has_gpu_passthru
   })
   network_config = templatefile("${path.module}/templates/cloud-init.network-config.yaml", {
-    ip_address             = var.ip_address
-    gateway_address        = var.gateway_address
+    ip_address           = var.ip_address
+    gateway_address      = var.gateway_address
+    primary_dns_server   = var.primary_dns_server
+    secondary_dns_server = var.secondary_dns_server
   })
   pool = var.datastore_name
 }

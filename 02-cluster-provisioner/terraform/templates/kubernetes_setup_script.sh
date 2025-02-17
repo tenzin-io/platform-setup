@@ -23,11 +23,8 @@ cd /setup-kubernetes/cluster-node
 
 cat <<'eof' > overrides.yaml
 # kubernetes
-node_type: "bootstrap_node"
 skip_phase_mark_control_plane: True
 cluster_name: "${cluster_name}"
-control_plane_endpoint_name: "${control_plane_endpoint_name}"
-control_plane_endpoint_address: "${control_plane_endpoint_address}"
 eof
 
 ansible-playbook main.yaml
