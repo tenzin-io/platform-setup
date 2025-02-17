@@ -1,0 +1,55 @@
+defaultRules:
+  create: false
+
+grafana:
+  enabled: false
+
+alertmanager:
+  enabled: false
+
+kubelet:
+  enabled: true
+
+kubeControllerManager:
+  enabled: false
+
+coreDns:
+  enabled: true
+
+kubeDns:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+kubeStateMetrics:
+  enabled: true
+
+nodeExporter:
+  enabled: true
+
+kubeApiServer:
+  enabled: true
+
+prometheusOperator:
+  admissionWebhooks:
+    enabled: false
+  tls:
+    enabled: false
+
+prometheus:
+  prometheusSpec:
+    retention: ${metrics_retention_duration}
+    scrapeInterval: ${metrics_scrape_interval}
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: ${prometheus_volume_size} 

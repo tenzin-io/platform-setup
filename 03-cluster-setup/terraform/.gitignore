@@ -1,4 +1,5 @@
 .terraform
 kubernetes.conf
 terraform.tfvars
-state.config
+terraform.tfstate
+terraform.tfstate.backup

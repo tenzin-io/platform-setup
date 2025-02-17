@@ -1,0 +1,36 @@
+hub:
+  config:
+    %{~ if enable_github_oauth ~}
+    GitHubOAuthenticator:
+      client_id: ${github_oauth_client_id}
+      client_secret: ${github_oauth_client_secret}
+      oauth_callback_url: https://${jupyterhub_fqdn}/hub/oauth_callback
+      allowed_organizations:
+        %{~ for github_organization in allowed_github_organizations ~}
+        - ${github_organization}
+        %{~ endfor ~}
+      scope:
+        - read:org
+    JupyterHub:
+      authenticator_class: github
+      admin_access: false
+    %{~ else ~}
+    Authenticator:
+      admin_users:
+        - jupyter-admin
+      allowed_users:
+        - jupyter-user
+    DummyAuthenticator:
+      password: dummy-password
+    JupyterHub:
+      authenticator_class: dummy
+    %{~ endif ~}
+
+proxy:
+  service:
+    type: ClusterIP
+
+singleuser:
+  extraResource:
+    limits:
+      nvidia.com/gpu: ${gpu_count}

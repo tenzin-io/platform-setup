@@ -1,0 +1,40 @@
+persistence:
+  enabled: true
+  size: ${grafana_volume_size}
+
+datasources:
+  datasource.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: ${prometheus_url}
+        jsonData:
+          manageAlerts: false
+          prometheusType: Prometheus
+          prometheusVersion: '2.50.0'
+
+%{~ if enable_github_oauth ~}
+envFromSecret: ${github_oauth_secret_name}
+%{~ endif ~}
+
+grafana.ini:
+  server:
+    domain: ${grafana_fqdn}
+    root_url: "https://%(domain)s"
+
+  users:
+    default_theme: light
+    allow_sign_up: false
+
+  %{~ if enable_github_oauth ~}
+  auth.github:
+    enabled: true
+    allow_sign_up: true
+    auto_login: true
+    allowed_organizations: ${allowed_github_organization}
+    role_attribute_path: contains(groups[*], '@${allowed_github_organization}/grafana-admins') && 'Admin' || 'Viewer'
+    client_id: $__env{GITHUB_OAUTH_CLIENT_ID}
+    client_secret: $__env{GITHUB_OAUTH_CLIENT_SECRET}
+  %{~ endif ~}
