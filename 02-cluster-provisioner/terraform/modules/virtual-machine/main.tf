@@ -10,11 +10,15 @@ terraform {
 
 resource "libvirt_cloudinit_disk" "cloudinit_iso" {
   name = "${var.name}-cloudinit-seed.iso"
-  user_data = templatefile("${path.module}/templates/cloud-init.cfg", {
+  user_data = templatefile("${path.module}/templates/cloud-init.user-data.yaml", {
     hostname               = var.name
     launch_script          = var.launch_script
     automation_user        = var.automation_user
     automation_user_pubkey = var.automation_user_pubkey
+  })
+  network_config = templatefile("${path.module}/templates/cloud-init.network-config.yaml", {
+    ip_address             = var.ip_address
+    gateway_address        = var.gateway_address
   })
   pool = var.datastore_name
 }
@@ -42,7 +46,7 @@ resource "libvirt_domain" "machine" {
   }
 
   xml {
-    xslt = file("${path.module}/files/base-transform.xslt")
+    xslt = var.has_gpu_passthru ? templatefile("${path.module}/templates/gpu-transform.xslt", { gpu_pci_bus = var.gpu_pci_bus }) : file("${path.module}/files/base-transform.xslt")
   }
 
   console {

@@ -11,6 +11,10 @@ A Terraform module that creates virtual machines on a libvirtd host.
 | <a name="input_cpu_count"></a> [cpu\_count](#input\_cpu\_count) | n/a | `number` | `2` | no |
 | <a name="input_datastore_name"></a> [datastore\_name](#input\_datastore\_name) | The name of the datastore | `string` | n/a | yes |
 | <a name="input_disk_size_mib"></a> [disk\_size\_mib](#input\_disk\_size\_mib) | n/a | `number` | `8192` | no |
+| <a name="input_gateway_address"></a> [gateway\_address](#input\_gateway\_address) | n/a | `string` | n/a | yes |
+| <a name="input_gpu_pci_bus"></a> [gpu\_pci\_bus](#input\_gpu\_pci\_bus) | n/a | `string` | `""` | no |
+| <a name="input_has_gpu_passthru"></a> [has\_gpu\_passthru](#input\_has\_gpu\_passthru) | n/a | `bool` | `false` | no |
+| <a name="input_ip_address"></a> [ip\_address](#input\_ip\_address) | n/a | `string` | n/a | yes |
 | <a name="input_launch_script"></a> [launch\_script](#input\_launch\_script) | The a custom script to run on the machine after cloud-init has finished | `string` | `""` | no |
 | <a name="input_memory_size_mib"></a> [memory\_size\_mib](#input\_memory\_size\_mib) | n/a | `number` | `2048` | no |
 | <a name="input_name"></a> [name](#input\_name) | The name of the virtual machine | `string` | n/a | yes |

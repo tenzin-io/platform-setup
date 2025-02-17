@@ -1,0 +1,11 @@
+network:
+  version: 2
+  ethernets:
+    en_interfaces:
+      match:
+        name: "en*"
+      addresses:
+        - ${ip_address}/24
+      gateway4: ${gateway_address}
+      dhcp4-overrides:
+        use-dns: true

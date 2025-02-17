@@ -45,3 +45,21 @@ variable "automation_user" {
 variable "automation_user_pubkey" {
   type = string
 }
+
+variable "has_gpu_passthru" {
+  type    = bool
+  default = false
+}
+
+variable "gpu_pci_bus" {
+  type    = string
+  default = ""
+}
+
+variable "ip_address" {
+  type = string
+}
+
+variable "gateway_address" {
+  type = string
+}
