@@ -19,14 +19,7 @@
         - libvirt-clients
         - bridge-utils
         - genisoimage
-        - avahi-daemon
   
-    - name: Enable and start avahi-daemon service
-      systemd:
-        name: avahi-daemon
-        state: started
-        enabled: yes
-
     - name: Disable and stop apparmor service
       systemd:
         name: apparmor
@@ -75,7 +68,7 @@
       lineinfile:
         path: /etc/default/grub
         regexp: '^GRUB_CMDLINE_LINUX='
-        line: "GRUB_CMDLINE_LINUX=\"amd_iommu=on amd_iommu=pt apparmor=0 video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids={{ gpu_pci_ids | join(',') }} vfio-pci.disable_vga=1\""
+        line: "GRUB_CMDLINE_LINUX=\"amd_iommu=on amd_iommu=pt mitigations=off apparmor=0 video=efifb:off pcie_acs_override=downstream,multifunction vfio-pci.ids={{ gpu_pci_ids | join(',') }} vfio-pci.disable_vga=1\""
       notify:
         - update grub
         - reboot system
