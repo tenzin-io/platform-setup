@@ -1,39 +1,5 @@
 # README
-
-## Local testing
-- Link to the `tenzin-bot.key` to SSH into the hypervisor
-- Create the `state.config`
-- Initialize the backend state
-- Setup the `terraform.tfvars`
-- Setup the AWS and Vault environment variables
-- Plan, apply, destroy
-
-### Example state.config
-```
-key = "terraform/cluster-provisioner/testing.tfstate"
-bucket = "tenzin-cloud"
-region = "us-east-1"
-```
-
-### Example initialization
-```
-terraform init -backend-config=state.config
-```
-
-### Example terraform.tfvars
-```hcl
-hypervisor_hostname = "vhost-1"
-
-cluster_name     = "t1"
-cluster_uuid     = "rand-value-here"
-vpc_network_cidr = "10.100.0.0/16"
-
-# for kubeconfig publishing
-vault_address  = "https://vault.tenzin.io"
-vault_username = "kubeconfig-publisher"
-vault_password = "password-here"
-```
-
+A workspace to setup my homelab virtual machines
 
 <!-- BEGIN_TF_DOCS -->
 ## Inputs
