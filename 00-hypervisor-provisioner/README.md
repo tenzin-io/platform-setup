@@ -6,3 +6,4 @@ The folder has components for provisioning hypervisors.
 - Make a USB installer
 - Use the interactive installation
 - Install minimal server
+- Install avahi-daemon service, and use mDNS to perform name resolutions.
